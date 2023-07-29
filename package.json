@@ -1,0 +1,72 @@
+{
+  "name": "arka-game-launcher",
+  "version": "0.1.0",
+  "description": "The Arka Game launcher is an App that gives the permission to download the Game packs to play on our servers such as Modded Minecraft Server or RP GTA via FiveM.",
+  "private": true,
+  "main": "public/electron.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexandrelg2022/arka-game-launcher.git"
+  },
+  "keywords": [
+    "Minecraft",
+    "GTA",
+    "FiveM",
+    "Launcher",
+    "Game"
+  ],
+  "author": "AlexandreLG2022",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alexandrelg2022/arka-game-launcher/issues"
+  },
+  "homepage": "./",
+  "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.10.1",
+    "react-redux": "^8.1.1",
+    "react-scripts": "5.0.1",
+    "redux": "^4.2.1",
+    "sort-by": "^1.2.0"
+  },
+  "scripts": {
+    "build": "craco build",
+    "start": "electron .",
+    "r-start": "react-scripts start",
+    "r-build": "react-scripts build",
+    "r-test": "react-scripts test",
+    "r-eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^25.3.2",
+    "eslint": "^8.46.0",
+    "eslint-plugin-react": "^7.33.0",
+    "tailwindcss": "^3.3.3",
+    "webpack-node-externals": "^3.0.0"
+  }
+}

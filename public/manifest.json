@@ -1,0 +1,9 @@
+{
+  "short_name": "Arka Game Launcher",
+  "name": "Arka Game Launcher",
+  "icons": [
+    
+  ],
+  "start_url": ".",
+  "display": "standalone"
+}
