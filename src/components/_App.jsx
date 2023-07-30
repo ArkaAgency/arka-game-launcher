@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Sidebar } from './Sidebar';
+import { TopBar } from './TopBar';
 
 /**
  * The App core React Component
@@ -11,7 +12,8 @@ import { Sidebar } from './Sidebar';
  * @returns
  */
 export function App({ element }) {
-    return <div className='bg-slate-900 text-white h-full w-full p-5 flex'>
+    return <div className='bg-slate-900 text-white h-full w-full p-5 flex select-none'>
+        <TopBar />
         <Sidebar />
         {element}
     </div>;
