@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { selectPage } from '../utils/selectors';
 import Bootstrap from '../views/Boostrap';
 import { PAGES } from '../constants/PAGES';
+import { Modded } from '../views/Content/Modded';
+import { Auth } from '../views/Auth';
 
 
 /**
@@ -23,7 +25,6 @@ export function AppRouter() {
     </>;
 }
 
-
 /**
  * The App Routes Array
  * @date 7/29/2023 - 12:29:47 PM
@@ -31,5 +32,7 @@ export function AppRouter() {
  * @type {{ [x: string]: React.Component; }}
  */
 export const Routes = {
-    [PAGES.BOOSTRAP]: <Bootstrap />
+    [PAGES.BOOSTRAP]: <Bootstrap />,
+    [PAGES.AUTH]: <Auth />,
+    [PAGES.CONTENT_MODDED]: <Modded />
 };
