@@ -4,6 +4,10 @@ import {FiAtSign} from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import { LoadingScreen } from '../components/LoadingScreen';
 import { ipcRenderer } from 'electron';
+import { setUserData } from '../utils/config';
+import { useDispatch } from 'react-redux';
+import { PAGES } from '../constants/PAGES';
+import { definePage } from '../features/page.action';
 
 export function Auth() {
 
@@ -52,12 +56,15 @@ AuthChoice.propTypes = {
 function MicrosoftLogin({
     onChoiceUpdate
 }) {
+    const dispatch = useDispatch();
+
     useEffect(() => {
         ipcRenderer.invoke('login.microsoft.open');
         // it's handling microsoft login success
         ipcRenderer.on('login.microsoft.success', (event, data) => {
-            console.log(data);
-            // todo store session, create remote account, ...
+            // it's saving user data to config and loading launcher UI
+            setUserData(data);
+            dispatch(definePage(PAGES.BOOSTRAP));
         });
         // it's handling microsoft login error
         ipcRenderer.on('login.microsoft.error', (event, error) => {

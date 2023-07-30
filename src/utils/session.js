@@ -1,3 +1,4 @@
+import { getUserData } from './config';
 
 /**
  * This method returns the user session validity
@@ -8,8 +9,8 @@
  */
 export function isLoggedIn() {
     return new Promise((resolve) => {
-        resolve({
-            validity: false
-        });
+        const userData = getUserData();
+        if (userData === null || userData === undefined) resolve(false);
+        resolve(true);
     });
 }
