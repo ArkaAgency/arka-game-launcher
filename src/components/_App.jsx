@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Sidebar } from './Sidebar';
 
 /**
  * The App core React Component
@@ -10,10 +11,10 @@ import PropTypes from 'prop-types';
  * @returns
  */
 export function App({ element }) {
-    console.log(element);
-    return <>
+    return <div className='bg-slate-900 text-white h-full w-full p-5 flex'>
+        <Sidebar />
         {element}
-    </>;
+    </div>;
 }
 
 App.propTypes = {

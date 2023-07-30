@@ -14,11 +14,14 @@ export function Sidebar(){
         dispatch(definePage(e.target.dataset.page));
     };
 
-    return <div className={'flex-shrink-0 w-40 h-full flex flex-col justify-between' + (page === PAGES.BOOSTRAP ? ' hidden' : '')}>
+    return <div className={'flex-shrink-0 w-40 h-full flex flex-col' + ([
+        PAGES.AUTH,
+        PAGES.BOOSTRAP
+    ].includes(page) ? ' hidden' : '')}>
         <div className='w-full'>
             <img src='./icon.png' alt='Arka Group Icon' className='w-[45px]' />
         </div>
-        <ul className='flex flex-col w-full'>
+        <ul className='flex flex-col w-full mt-5'>
             <li className={'m-2 text-slate-500 text-sm font-bold flex items-center w-full cursor-pointer hover:text-white transition-all' + (page === PAGES.CONTENT_MODDED ? ' text-white' : '')} onClick={handlePageChange} data-page={PAGES.CONTENT_MODDED}>
                 <FiBox className='text-2xl' />&nbsp;&nbsp;&nbsp;Modded&nbsp;&nbsp;<span className='p-1 rounded bg-slate-800 text-xs font-bold'>S1</span>
             </li>
@@ -26,7 +29,7 @@ export function Sidebar(){
                 <FiMail className='text-2xl' />&nbsp;&nbsp;&nbsp;Nouveautés
             </li>
         </ul>
-        <div className='border-x-1 border-slate-600 border-solid flex justify-between items-center w-full'>
+        <div className='border-x-1 border-slate-600 border-solid flex justify-between items-center w-full m-auto'>
             <div className='flex justify-center items-center'>
                 <img src='https://minotar.net/avatar/JustTheWise' alt='Arka Group Icon' className='w-[30px] rounded' />
                 <p className='text-xs font-bold'>&nbsp;&nbsp;JustTheWise</p>
