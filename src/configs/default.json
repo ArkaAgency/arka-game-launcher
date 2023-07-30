@@ -1,0 +1,25 @@
+{
+    "schema": "0.1.0",
+    "users": [],
+    "games": {
+        "modded_s1": {
+            "startup": {
+                "resolution": {
+                    "width": 1280,
+                    "height": 720
+                },
+                "fullscreen": false,
+                "autoconnect": false
+            },
+            "java": {
+                "ram": {
+                    "min": 1024,
+                    "max": 1024
+                },
+                "customExecutable": "",
+                "jvmOptions": "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M"
+            },
+            "mods": []
+        }
+    }
+}
