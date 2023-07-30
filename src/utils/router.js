@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 import { selectPage } from '../utils/selectors';
 import Bootstrap from '../views/Boostrap';
 import { PAGES } from '../constants/PAGES';
-import { Modded } from '../views/Content/Modded';
 import { Auth } from '../views/Auth';
+import { Home } from '../views/Home';
+import { Shop } from '../views/Shop';
+import { Settings } from '../views/Settings';
 
 
 /**
@@ -34,5 +36,7 @@ export function AppRouter() {
 export const Routes = {
     [PAGES.BOOSTRAP]: <Bootstrap />,
     [PAGES.AUTH]: <Auth />,
-    [PAGES.CONTENT_MODDED]: <Modded />
+    [PAGES.HOME]: <Home />,
+    [PAGES.SHOP]: <Shop />,
+    [PAGES.SETTINGS_ACCOUNT]: <Settings />
 };
