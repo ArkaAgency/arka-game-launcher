@@ -1,5 +1,5 @@
 // it's defining the actions constants
-export const DEFINE_PAGE = 'plage/define';
+export const DEFINE_PAGE = 'page/define';
 
 // it's defining the actions methods
 

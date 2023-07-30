@@ -14,7 +14,7 @@ const initialState = PAGES.BOOSTRAP;
  * @returns {*}
  */
 export function pageReducer(state = initialState, action) {
-    if (action === DEFINE_PAGE) {
+    if (action.type === DEFINE_PAGE) {
         return action.payload;
     }
     return state;
