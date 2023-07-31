@@ -7,8 +7,7 @@ import { PAGES } from '../constants/PAGES';
 import { Auth } from '../views/Auth';
 import { Home } from '../views/Home';
 import { Shop } from '../views/Shop';
-import { Settings } from '../views/Settings';
-
+import * as Settings from '../views/Settings';
 
 /**
  * Renders the App Router compenent who manages the routing
@@ -38,5 +37,9 @@ export const Routes = {
     [PAGES.AUTH]: <Auth />,
     [PAGES.HOME]: <Home />,
     [PAGES.SHOP]: <Shop />,
-    [PAGES.SETTINGS_ACCOUNT]: <Settings />
+    [PAGES.SETTINGS_ACCOUNT]: <Settings.Settings pageComponent={<Settings.SettingsAccount />} />,
+    [PAGES.SETTINGS_MINECRAFT]: <Settings.Settings pageComponent={<Settings.SettingsMinecraft />} />,
+    [PAGES.SETTINGS_JAVA]: <Settings.Settings pageComponent={<Settings.SettingsJava />} />,
+    [PAGES.SETTINGS_MODS]: <Settings.Settings pageComponent={<Settings.SettingsMods />} />,
+    [PAGES.SETTINGS_UPDATE]: <Settings.Settings pageComponent={<Settings.SettingsUpdate />} />
 };
