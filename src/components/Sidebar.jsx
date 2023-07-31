@@ -18,7 +18,6 @@ export function Sidebar(){
     }, [page]);
 
     const handlePageChange = (e) => {
-        console.log(e.currentTarget.getAttribute('data-page'));
         if (e.currentTarget.dataset.page === page) return;
         dispatch(definePage(e.currentTarget.dataset.page));
     };
