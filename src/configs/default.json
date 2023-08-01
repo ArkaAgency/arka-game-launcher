@@ -21,5 +21,8 @@
             },
             "mods": []
         }
+    },
+    "launcher": {
+        "autoUpdate": true
     }
 }

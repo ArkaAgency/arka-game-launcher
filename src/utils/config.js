@@ -157,6 +157,17 @@ export function setAutoconnect(autoconnect=defaultConfig.games.modded_s1.startup
     _saveConfig();
 }
 
+export function hasAutoUpdate() {
+    _init();
+    return config.launcher.autoUpdate;
+}
+
+export function setAutoUpdate(autoUpdate) {
+    _init();
+    config.launcher.autoUpdate = autoUpdate;
+    _saveConfig();
+}
+
 export function checkFileOrFolderExists(filename = '') {
     _init();
     const appdata = getAppDataPath('.arkamodded');
