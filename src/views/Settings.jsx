@@ -5,6 +5,7 @@ import { MdVerified, MdDelete } from 'react-icons/md';
 import { LiaJava } from 'react-icons/lia';
 import getModsListFromAPI, { ModTypes, deleteLocalMod, getModsListFromLocal, importLocalMod, setAllModsEnabled, toggleMod } from '../utils/game/mods-utils';
 import * as dialog from 'node-file-dialog';
+import { hasAutoUpdate, setAutoUpdate } from '../utils/config';
 
 export function Settings({
     pageComponent
@@ -176,7 +177,26 @@ export function SettingsMods() {
 }
 
 export function SettingsUpdate() {
+
+    const [autoUpdate, defAutoUpdate] = useState(false);
+
+    useEffect(() => {
+        defAutoUpdate(hasAutoUpdate());
+    }, []);
+
+    const handleChange = (e) => {
+        if (e.target.name === 'autoUpdate') {
+            defAutoUpdate(e.target.checked);
+            setAutoUpdate(e.target.checked);
+        }
+    };
+
     return <div>
-        
+        <h1 className='text-2xl font-semibold text-white'>Mises à jour</h1>
+        <label className="relative inline-flex items-center cursor-pointer mt-3" htmlFor='autoUpdate'>
+            <input type="checkbox" checked={autoUpdate} onChange={handleChange} name='autoUpdate' id='autoUpdate' className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Activer les mises à jour automatiques du Launcher</span>
+        </label>
     </div>;
 }
