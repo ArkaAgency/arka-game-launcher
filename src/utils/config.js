@@ -14,7 +14,7 @@ function _init() {
 
     const subfolders = [
         'assets', 'config', 'defaultconfigs', 'externalLibraries', 'java', 'natives',
-        'libraries', 'logs', 'mods', 'patchouli_books', 'texturepacks', 'saves', 'shaderpacks', 
+        'libraries', 'logs', 'mods', 'mods/local', 'mods/remote', 'mods/remote/required', 'mods/remote/optionnals', 'mods/remote/performances', 'patchouli_books', 'texturepacks', 'saves', 'shaderpacks', 
         'versions', 'screenshots', 'XaeroWaypoints', 'XaeroWorldMap', 'schematics', 'mod_data',
         'crash-reports'
     ];
