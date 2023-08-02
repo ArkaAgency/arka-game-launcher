@@ -91,16 +91,19 @@ async function listenIpc() {
     // display full size window
     ipc.handle('main', () => {
         mainWindow.setSize(1200, 690);
+        mainWindow.center();
     });
 
     // display small size window
     ipc.handle('default', () => {
         mainWindow.setSize(420, 420);
+        mainWindow.center();
     });
 
     // open microsoft auth window
     ipc.handle('login.microsoft.open', async () => {
         createMicrosoftWindow();
+        authWindow.center();
 
         // it's handling the window navigation event
         authWindow.webContents.on('did-navigate', async () => {
