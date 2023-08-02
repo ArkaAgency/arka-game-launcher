@@ -147,6 +147,18 @@ async function listenIpc() {
             });
         });
     });
+
+    // handle user disconnect
+    ipc.handle('disconnect', () => {
+        mainWindow.hide();
+        const session = mainWindow.webContents.session;
+        session.clearCache();
+        if (authWindow) {
+            const session2 = authWindow.webContents.session;
+            session2.clearCache();
+        }
+        createWindow();
+    });
 }
 
 // waiting for app to be ready to create window and listen to the ipc protocol
