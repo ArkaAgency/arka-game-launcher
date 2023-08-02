@@ -5,8 +5,9 @@ import { MdVerified, MdDelete } from 'react-icons/md';
 import { LiaJava } from 'react-icons/lia';
 import getModsListFromAPI, { ModTypes, deleteLocalMod, getModsListFromLocal, importLocalMod, setAllModsEnabled, toggleMod } from '../utils/game/mods-utils';
 import * as dialog from 'node-file-dialog';
-import { getAllocatedRam, hasAutoUpdate, isAutoconnect, isFullscreen, setAllocatedRam, setAutoUpdate, setAutoconnect, setFullscreen } from '../utils/config';
+import { getAllocatedRam, hasAutoUpdate, isAutoconnect, isFullscreen, setAllocatedRam, setAutoUpdate, setAutoconnect, setFullscreen, getUserData, clearUserData } from '../utils/config';
 import * as os from 'os';
+import { ipcRenderer } from 'electron';
 
 export function Settings({
     pageComponent
@@ -21,8 +22,25 @@ Settings.propTypes = {
 };
 
 export function SettingsAccount() {
-    return <div>
-        
+
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+        const userData = getUserData() || {profile:{name:'PLAYERNAME'}};
+        setUsername(userData.profile.name);
+    }, []);
+
+    const handleDisconnect = () => {
+        clearUserData();
+        ipcRenderer.invoke('disconnect');
+    };
+
+    return <div className='w-full'>
+        <div className="w-full flex items-center justify-center flex-wrap mb-4">
+            <img src={`https://minotar.net/avatar/${username}`} alt="Your skin head" className='h-32 rounded-full mb-3' />
+            <p className='w-full text-center font-semibold text-sm mb-3'>{username}</p>
+            <button className='p-2 px-3 text-sm rounded bg-red-500 font-semibold cursor-pointer hover:bg-red-600 transition-all' onClick={handleDisconnect}>Se déconnecter</button>
+        </div>
     </div>;
 }
 
