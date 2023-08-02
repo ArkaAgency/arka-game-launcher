@@ -5,7 +5,8 @@ import { MdVerified, MdDelete } from 'react-icons/md';
 import { LiaJava } from 'react-icons/lia';
 import getModsListFromAPI, { ModTypes, deleteLocalMod, getModsListFromLocal, importLocalMod, setAllModsEnabled, toggleMod } from '../utils/game/mods-utils';
 import * as dialog from 'node-file-dialog';
-import { hasAutoUpdate, setAutoUpdate } from '../utils/config';
+import { getAllocatedRam, hasAutoUpdate, setAllocatedRam, setAutoUpdate } from '../utils/config';
+import * as os from 'os';
 
 export function Settings({
     pageComponent
@@ -32,8 +33,62 @@ export function SettingsMinecraft() {
 }
 
 export function SettingsJava() {
-    return <div>
+
+    const [ram, setRam] = useState({
+        min: 512,
+        max: 1024
+    });
+    const [sysMem, setSysMem] = useState({
+        FreeMem: 1024, 
+        TotalMem: 1024
+    });
+
+    useEffect(() => {
+        const {min, max} = getAllocatedRam();
+        setRam({ min, max });
+
+        const osFreeMem = os.freemem();
+        const allFreeMem = (osFreeMem / (1024 * 1024));
+        const osTotalMem = os.totalmem();
+        const allTotalMem = (osTotalMem / (1024 * 1024));
+        setSysMem({
+            FreeMem: allFreeMem,
+            TotalMem: allTotalMem
+        });
+    }, []);
+
+    const handleChange = (e) => {
+        if (e.target.name === 'min-ram') {
+            const newRam = {
+                max: ram.max,
+                min: Number.parseInt(e.target.value)
+            };
+            setAllocatedRam(newRam.min, newRam.max);
+            setRam(newRam);
+        } else if (e.target.name === 'max-ram') {
+            const newRam = {
+                min: ram.min,
+                max: Number.parseInt(e.target.value)
+            };
+            setAllocatedRam(newRam.min, newRam.max);
+            setRam(newRam);
+        }
+    };
+
+    return <div className='w-full h-full'>
+        <h1 className='text-2xl font-semibold text-white'>Java</h1>
+        <p className="text-xs text-gray-400 mb-2">Ici vous pouvez gérer les paramètres de l&apos;environnement d&apos;exécution de Java. La mémoire maximale recommandée est de 4 Gb.</p>
         
+        <div className="flex items-center justify-between w-full mb-1">
+            <label htmlFor="min-ram" className="block mb-1 mt-3 text-sm font-medium text-gray-900 dark:text-white text-left w-[49%]">Mémoire Ram Minimale <span className='p-1 text-xs rounded bg-orange-500 text-white uppercase font-semibold cursor-pointer'>{Math.round((ram.min / 1024) * 10)/10} Gb</span></label>
+            <label htmlFor="max-ram" className="block mb-1 mt-3 text-sm font-medium text-gray-900 dark:text-white text-right w-[49%]">Mémoire Ram Maximale <span className='p-1 text-xs rounded bg-orange-500 text-white uppercase font-semibold cursor-pointer'>{Math.round((ram.max / 1024) * 10)/10} Gb</span></label>
+        </div>
+
+        <div className="flex items-center justify-between w-full">
+            <input id="min-ram" type="range" min='512' max={ram.max} step='512' value={ram.min} name='min-ram' onChange={handleChange} className="w-[49%] h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+            <input id="max-ram" type="range" min={ram.min} max={sysMem.TotalMem} step='512' value={ram.max} name='max-ram' onChange={handleChange} className="w-[49%] h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+        </div>
+
     </div>;
 }
 
