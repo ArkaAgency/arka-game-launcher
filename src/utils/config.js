@@ -74,6 +74,12 @@ export function setUserData(userData=defaultConfig.users) {
     _saveConfig();
 }
 
+export function clearUserData() {
+    _init();
+    config.users = [];
+    _saveConfig();
+}
+
 export function hasCustomJavaExecutable() {
     _init();
     return config.games.modded_s1.java.useCustomExecutable;
