@@ -5,7 +5,7 @@ import { MdVerified, MdDelete } from 'react-icons/md';
 import { LiaJava } from 'react-icons/lia';
 import getModsListFromAPI, { ModTypes, deleteLocalMod, getModsListFromLocal, importLocalMod, setAllModsEnabled, toggleMod } from '../utils/game/mods-utils';
 import * as dialog from 'node-file-dialog';
-import { getAllocatedRam, hasAutoUpdate, setAllocatedRam, setAutoUpdate } from '../utils/config';
+import { getAllocatedRam, hasAutoUpdate, isAutoconnect, isFullscreen, setAllocatedRam, setAutoUpdate, setAutoconnect, setFullscreen } from '../utils/config';
 import * as os from 'os';
 
 export function Settings({
@@ -27,8 +27,43 @@ export function SettingsAccount() {
 }
 
 export function SettingsMinecraft() {
+
+    const [fullscreen, defFullscreen] = useState(false);
+    const [autoconnect, defAutoconnect] = useState(false);
+
+    useEffect(() => {
+        defFullscreen(isFullscreen());
+        defAutoconnect(isAutoconnect());
+    }, []);
+
+    const handleChange = (e) => {
+        const obj = {
+            'fullscreen': defFullscreen,
+            'autoconnect': defAutoconnect
+        };
+        obj[e.target.name](e.target.checked);
+        const obj2 = {
+            'fullscreen': setFullscreen,
+            'autoconnect': setAutoconnect
+        };
+        obj2[e.target.name](e.target.checked);
+    };
+
     return <div>
-        
+        <h1 className='text-2xl font-semibold text-white'>Minecraft</h1>
+        <p className="text-xs text-gray-400 mb-2">Ici vous pouvez gérer les options de lancement de votre jeu.</p>
+
+        <label className="w-full mb-2 relative inline-flex items-center cursor-pointer mt-3" htmlFor='fullscreen'>
+            <input type="checkbox" checked={fullscreen} onChange={handleChange} name='fullscreen' id='fullscreen' className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Lancer le jeu en plein écran</span>
+        </label>
+
+        <label className="w-full relative inline-flex items-center cursor-pointer mt-3" htmlFor='autoconnect'>
+            <input type="checkbox" checked={autoconnect} onChange={handleChange} name='autoconnect' id='autoconnect' className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Se connecter automatiquement au serveur</span>
+        </label>
     </div>;
 }
 
