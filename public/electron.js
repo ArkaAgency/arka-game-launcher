@@ -28,7 +28,7 @@ function createWindow() {
             allowRunningInsecureContent: true
         },
         frame: false,
-        icon: path.join(__dirname, '/icon.png'),
+        icon: path.join(__dirname, '/Icon_Alone_Transparent.png'),
         resizable: false,
     });
     mainWindow.loadFile(path.join(__dirname, '../build/index.html'));
@@ -52,7 +52,7 @@ function createMicrosoftWindow() {
         minimizable: false,
         closable: true,
         frame: true,
-        icon: path.join(__dirname, '/icon.png'),
+        icon: path.join(__dirname, '/Icon_Alone_Transparent.png'),
         webPreferences: {
             devTools: true,
             nodeIntegration: false,

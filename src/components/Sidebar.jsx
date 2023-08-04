@@ -27,7 +27,7 @@ export function Sidebar(){
         PAGES.BOOSTRAP
     ].includes(page) ? ' hidden' : '')}>
         <div className='w-full'>
-            <img src='./icon.png' alt='Arka Group Icon' className='w-[45px]' />
+            <img src='./Icon_Alone_Transparent.png' alt='Arka Group Icon' className='w-[45px]' />
         </div>
         <ul className='flex flex-col w-full mt-10'>
             <li className={'m-2 mb-4 text-slate-500 text-sm font-bold flex items-center w-full cursor-pointer hover:text-white transition-all' + (page === PAGES.HOME ? ' text-white' : '')} onClick={handlePageChange} data-page={PAGES.HOME}>
