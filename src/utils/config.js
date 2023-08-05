@@ -13,10 +13,7 @@ function _init() {
         fs.mkdirSync(appdata);
 
     const subfolders = [
-        'assets', 'config', 'defaultconfigs', 'externalLibraries', 'java', 'natives',
-        'libraries', 'logs', 'mods', 'mods/local', 'mods/remote', 'mods/remote/required', 'mods/remote/optionnals', 'mods/remote/performances', 'patchouli_books', 'texturepacks', 'saves', 'shaderpacks', 
-        'versions', 'screenshots', 'XaeroWaypoints', 'XaeroWorldMap', 'schematics', 'mod_data',
-        'crash-reports'
+        'mods', 'mods/local', 'mods/remote', 'mods/remote/required', 'mods/remote/optionnals', 'mods/remote/performances'
     ];
     subfolders.forEach((folder) => {
         if (!fs.existsSync(path.join(appdata, folder))) 
@@ -182,6 +179,17 @@ export function hasAutoUpdate() {
 export function setAutoUpdate(autoUpdate) {
     _init();
     config.launcher.autoUpdate = autoUpdate;
+    _saveConfig();
+}
+
+export function getUpdateState() {
+    _init();
+    return config.games.modded_s1.updateState;
+}
+
+export function setUpdateState(updateState) {
+    _init();
+    config.games.modded_s1.updateState = updateState;
     _saveConfig();
 }
 

@@ -3,6 +3,7 @@
     "users": [],
     "games": {
         "modded_s1": {
+            "updateState": "uninstalled",
             "startup": {
                 "resolution": {
                     "width": 1280,
