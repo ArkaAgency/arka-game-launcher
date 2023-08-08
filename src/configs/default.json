@@ -6,8 +6,8 @@
             "updateState": "uninstalled",
             "startup": {
                 "resolution": {
-                    "width": 1280,
-                    "height": 720
+                    "width": 854,
+                    "height": 480
                 },
                 "fullscreen": false,
                 "autoconnect": false
@@ -19,7 +19,7 @@
                 },
                 "useCustomExecutable": false,
                 "customExecutable": "",
-                "jvmOptions": "-XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M"
+                "jvmOptions": "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M"
             },
             "mods": []
         }

@@ -7,7 +7,7 @@ let config = null;
 
 function _init() {
     // it's creating default MODDED_S1 folders
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
 
     if (!fs.existsSync(appdata)) 
         fs.mkdirSync(appdata);
@@ -22,6 +22,14 @@ function _init() {
 
     if (!fs.existsSync(path.join(appdata, 'userData.json')))
         _writeDefaultConfig();
+
+    if (!fs.existsSync(path.join(appdata, 'libs.txt')))
+        fs.writeFileSync(
+            path.join(getAppDataPath('ArkaGameLauncher'), 'libs.txt'),
+            fs.readFileSync(
+                path.join(__dirname, 'libs.txt')
+            )
+        );
 
     // it's loading config into a variable
     config = JSON.parse(
@@ -39,12 +47,12 @@ function _init() {
 }
 
 function _writeDefaultConfig() {
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     fs.writeFileSync(path.join(appdata, 'userData.json'), JSON.stringify(defaultConfig));
 }
 
 function _saveConfig() {
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     fs.writeFileSync(path.join(appdata, 'userData.json'), JSON.stringify(config));
 }
 
@@ -195,25 +203,25 @@ export function setUpdateState(updateState) {
 
 export function checkFileOrFolderExists(filename = '') {
     _init();
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     return fs.existsSync(path.join(appdata, filename));
 }
 
 export function getFileOrFolderPath(filename='') {
     _init();
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     return path.join(appdata, filename);
 }
 
 export function getFileContents(filename) {
     _init();
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     return fs.readFileSync(path.join(appdata, filename));
 }
 
 export function writeFileContents(filename, data) {
     _init();
-    const appdata = getAppDataPath('.arkamodded');
+    const appdata = getAppDataPath('ArkaGameLauncher');
     fs.writeFileSync(path.join(appdata, filename), data);
     return true;
 }
