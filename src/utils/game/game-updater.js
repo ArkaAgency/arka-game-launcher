@@ -107,7 +107,9 @@ export default class GameUpdater {
                 if (fs.existsSync(filename)) {
                     const fileBuffer = fs.readFileSync(filename);
                     const fileHash = createHash('md5').update(fileBuffer).digest('hex');
-                    if (fileHash !== file.md5) this.filesToDownload.push({
+                    if (fileHash === file.md5) return;
+                    fs.rmSync(filename);
+                    this.filesToDownload.push({
                         ...file,
                         filename
                     });
