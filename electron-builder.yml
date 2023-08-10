@@ -1,0 +1,51 @@
+appId: 'io.arka-group.ArkaGameLauncher'
+productName: 'ArkaGameLauncher'
+artifactName: '${productName}-setup-${version}.${ext}'
+
+copyright: 'Copyright © 2023 Arka Group'
+
+asar: false
+compression: 'maximum'
+
+files:
+  - '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.nvmrc,.eslintrc.json,.dist,out}'
+
+extraResources:
+  - 'libraries'
+
+# Windows Configuration
+win: 
+  target: 
+    - target: 'nsis'
+      arch: 'x64'
+
+# Windows Installer Configuration
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+
+# macOS Configuration
+mac:
+  target:
+    - target: 'dmg'
+      arch:
+        - 'x64'
+        - 'arm64'
+  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
+  category: 'public.app-category.games'
+
+# Linux Configuration
+linux: 
+  target: 'AppImage'
+  maintainer: 'Arka Group'
+  vendor: 'Arka Group'
+  synopsis: 'Modded Minecraft Launcher for Arka Minecraft Server'
+  description: 'Modded Minecraft Launcher for Arka Minecraft Server'
+  category: 'Game'
+
+
+directories:
+  buildResources: 'build'
+  output: 'dist'
