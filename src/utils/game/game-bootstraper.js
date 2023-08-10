@@ -1,15 +1,69 @@
 import { getAllocatedRam, getFileOrFolderPath, getJvmOptions, getResolution, getUserData } from '../config';
 import { spawn } from 'child_process';
 import * as fs from 'fs';
+import getModsListFromAPI, { getModsListFromLocal } from './mods-utils';
+import { createHash } from 'crypto';
 
 export default class GameBootstraper {
     constructor() {
         this.events = [];
     }
 
-    run() {
+    async run() {
         // init
         this.emit(Events.UpdateStateChange, 'launching');
+
+        // it's getting mods folder ready
+        // it takes required mods hashed + enabled mods hashes and generate an array with requireds mods to be in mods folder
+        // all mods that are not in the array but in the mods folder is removed
+        // all mods that are in the array but not in the mods folder is moved into the mods folder
+
+        // mixing local and remote mods
+        const remoteMods = await getModsListFromAPI();
+        const localMods = await getModsListFromLocal();
+        const pleasedMods = [
+            ...remoteMods.mods,
+            ...localMods
+        ].filter((modObj) => {
+            return modObj.type === 'required' || modObj.enabled;
+        });
+
+        // gettings mods in mods folder
+        const modsInModsFolderList = fs.readdirSync(getFileOrFolderPath('mods/'));
+        const modsInModsFolder = modsInModsFolderList.filter((filename) => {
+            const modFilename = getFileOrFolderPath(`mods/${filename}`);
+            const fileStat = fs.statSync(modFilename);
+            return fileStat.isFile();
+        }).map((filename) => {
+            const modFilename = getFileOrFolderPath(`mods/${filename}`);
+            const modBuffer = fs.readFileSync(modFilename);
+            const modHash = createHash('md5').update(modBuffer).digest('hex');
+
+            return {
+                md5: modHash,
+                filename
+            };
+        });
+
+        // deleting unallowed mods
+        modsInModsFolder.forEach((mod) => {
+            if (!pleasedMods.find((m) => m.md5 === mod.md5)) {
+                const modFilename = getFileOrFolderPath(`mods/${mod.filename}`);
+                fs.rmSync(modFilename);
+            }
+        });
+
+        // moving mods to mods folder
+        pleasedMods.forEach((mod) => {
+            // dont copy paste mod if exists in mods folder
+            if (modsInModsFolder.find((m) => m.md5 === mod.md5)) return;
+
+            // copy mods
+            const prefix = mod.type === 'local' ? 'local/' : ('remote/' + mod.type + '/');
+            const modFilename = getFileOrFolderPath(`mods/${prefix}/${mod.filename}`);
+            const modDest = getFileOrFolderPath(`mods/${mod.filename}`);
+            fs.cpSync(modFilename, modDest);
+        });
 
         // it's getting the java path
         const javaPath = getJavaPath();
@@ -21,6 +75,9 @@ export default class GameBootstraper {
 
         // it's executing the command line in child process
         const minecraft = spawn(line, minecraftCommandLineArray);
+
+        // change status to running
+        this.emit(Events.UpdateStateChange, 'running');
 
         // it's creating the child process handlers
         minecraft.stdout.on('data', (data) => {

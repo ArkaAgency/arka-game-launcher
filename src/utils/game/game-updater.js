@@ -27,8 +27,14 @@ export default class GameUpdater {
         if (!gameFiles.success) return alert('erreur a handler');
         this.createFolders(gameFiles.folders);
 
+        // it's checking mods files
+        const modsFiles = await getModsFiles();
+        if (!modsFiles.success) return alert('erreur a handler');
+        this.createFolders(modsFiles.folders);
+
         // it's running java download / verification
         this.emit(Events.UpdateStateChange, 'checking');
+        await this.processVerification(modsFiles.files, 'mods/remote/');
         await this.processVerification(javaFiles.files, 'java/');
         await this.processVerification(gameFiles.files);
         if (this.filesToDownload.length === 0) 
@@ -42,6 +48,7 @@ export default class GameUpdater {
             // download finished, re-verify
             // it's running java download / verification
             this.emit(Events.UpdateStateChange, 'checking');
+            await this.processVerification(modsFiles.files, 'mods/remote/');
             await this.processVerification(javaFiles.files, 'java/');
             await this.processVerification(gameFiles.files);
 
@@ -156,7 +163,7 @@ const Events = {
 
 function getJavaFiles() {
     return new Promise((resolve) => {
-        axios.get('http://localhost:4004/update/java/windows_x64')
+        axios.get('https://api.modded.arka-group.io/update/java/windows_x64')
             .then((res) => res.data)
             .then((data) => {
                 resolve(data);
@@ -172,7 +179,23 @@ function getJavaFiles() {
 
 function getGameFiles() {
     return new Promise((resolve) => {
-        axios.get('http://localhost:4004/update/game')
+        axios.get('https://api.modded.arka-group.io/update/game')
+            .then((res) => res.data)
+            .then((data) => {
+                resolve(data);
+            })
+            .catch((err) => {
+                resolve({
+                    success: false
+                });
+                throw err;
+            });
+    });
+}
+
+function getModsFiles() {
+    return new Promise((resolve) => {
+        axios.get('https://api.modded.arka-group.io/update/mods')
             .then((res) => res.data)
             .then((data) => {
                 resolve(data);

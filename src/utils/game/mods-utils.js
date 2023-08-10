@@ -1,9 +1,9 @@
-import mods from '../../__mocks__/modsApi';
 import * as fs from 'fs';
 import { getFileOrFolderPath, getMods, setMods } from '../config';
 import * as util from 'util';
 import * as jarfile from 'jarfile';
 import { createHash } from 'crypto';
+import * as axios from 'axios';
 
 const asyncJarCheck = util.promisify(jarfile.fetchJarAtPath);
 
@@ -16,15 +16,25 @@ const asyncJarCheck = util.promisify(jarfile.fetchJarAtPath);
  */
 export default function getModsListFromAPI() {
     return new Promise((resolve) => {
-        resolve({
-            success: true,
-            mods: JSON.parse(JSON.stringify(mods)).map((mod) => {
-                return new Mod({ 
-                    ...mod,
-                    enabled: mod.type === ModTypes.Required || (getMods().find((m) => m.md5 === mod.md5) !== undefined)
+        axios.get('https://api.modded.arka-group.io/update/mods')
+            .then((res) => res.data)
+            .then((data) => {
+                resolve({
+                    success: true,
+                    mods: data.mods.map((mod) => {
+                        return new Mod({ 
+                            ...mod,
+                            enabled: mod.type === ModTypes.Required || (getMods().find((m) => m.md5 === mod.md5) !== undefined)
+                        });
+                    })
                 });
             })
-        });
+            .catch((err) => {
+                console.error(err);
+                resolve({
+                    success: false
+                });
+            });
     });
 }
 
@@ -223,5 +233,5 @@ export const ModTypes = {
     Required: 'required',
     Performances: 'performances',
     Local: 'local',
-    Optionnal: 'optionnal'
+    Optionnal: 'optionnals'
 };

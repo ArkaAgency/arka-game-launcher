@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {AiOutlineFire, AiFillWindows, AiFillApple, AiFillClockCircle, AiOutlineLoading3Quarters, AiFillSetting} from 'react-icons/ai';
 import {VscTerminalLinux} from 'react-icons/vsc';
-import { FaHdd, FaPlay } from 'react-icons/fa';
+import { FaHdd, FaPlay, FaStop } from 'react-icons/fa';
 import { RxUpdate } from 'react-icons/rx';
 import { getUpdateState } from '../../utils/config';
 import GameUpdater from '../../utils/game/game-updater';
@@ -62,6 +62,7 @@ export default function ModdedS1() {
 
     const actionButtonContent = {
         'launching':          <><AiOutlineLoading3Quarters className='text-xl animate-spin' />&nbsp;&nbsp;Lancement</>,
+        'running':          <><FaStop className='text-sm' />&nbsp;&nbsp;Fermer le jeu</>,
         'ready':          <><FaPlay className='text-sm animate-pulse' />&nbsp;&nbsp;Jouer</>,
         'hasBeenUpdated': <><FaPlay className='text-sm animate-pulse' />&nbsp;&nbsp;Jouer</>,
         'uninstalled': <><FaHdd className='text-xl' />&nbsp;&nbsp;Installer</>,
@@ -95,7 +96,7 @@ export default function ModdedS1() {
             <span className='w-fit mr-2 text-sm font-semibold p-3 flex items-center bg-slate-800 rounded'>
                 <AiFillClockCircle className='text-xl' />&nbsp;&nbsp;Temps de jeu :&nbsp;<strong>0&nbsp;heures</strong> 
             </span>
-            <button onClick={handleTriggerUpdate} className={'w-fit text-sm font-semibold p-3 px-5 flex items-center bg-blue-500 rounded cursor-pointer relative z-10' + (updateState === 'downloading' ? ' bg-slate-900' : '') + ((updateState === 'ready' || updateState === 'hasBeenUpdated') ? ' bg-indigo-500' : '')}>
+            <button onClick={handleTriggerUpdate} className={'w-fit text-sm font-semibold p-3 px-5 flex items-center bg-blue-500 rounded cursor-pointer relative z-10' + (updateState === 'downloading' ? ' bg-slate-900' : '') + ((updateState === 'ready' || updateState === 'hasBeenUpdated') ? ' bg-indigo-500' : '') + ((updateState === 'running') ? ' bg-red-500' : '')}>
                 {actionButtonContent}
             </button>
         </div>
