@@ -13,6 +13,15 @@ dotenv.config();
 let mainWindow;
 let authWindow;
 
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+
 const microsoft = {
     getAuthorizationURL(clientId, redirectUri){
         return `https://login.live.com/oauth20_authorize.srf?client_id=${clientId}&redirect_uri=${redirectUri}&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&response_type=code&cobrandid=8058f65d-ce06-4c30-9559-473c9275a65d`;
@@ -21,7 +30,7 @@ const microsoft = {
     processFullAuth(clientId, clientSecret, redirectUri, code) {
         return new Promise((resolve) => {
             this.getToken(clientId, clientSecret, code, redirectUri).then((getTokenRes) => {
-                
+
                 const microsoftAccessToken = getTokenRes.access_token;
 
                 this.authenticate(microsoftAccessToken).then((xboxLoginRes) => {
@@ -34,33 +43,54 @@ const microsoft = {
                         const xstsToken = xstsTokenRes.Token;
 
                         this.getMinecraftToken(xboxLiveUHS, xstsToken).then((minecraftTokenRes) => {
-                            
+
                             const minecraftToken = minecraftTokenRes.access_token;
                             
-                            this.getMinecraftProfile(minecraftToken).then((minecraftProfileRes) => {
+                            this.getMinecraftOwnership(minecraftToken).then((minecraftOwnership) => {
 
-                                resolve({
-                                    success: true,
-                                    data: {
-                                        minecraftToken,
-                                        profile: {
-                                            id: minecraftProfileRes.id,
-                                            name: minecraftProfileRes.name
-                                        }
-                                    }
-                                });
-
-                            }).catch((err) => {
-                                resolve({
+                                const hasMinecraftJavaEdition = minecraftOwnership.items.some((item) => item.name === 'game_minecraft');
+                                if (!hasMinecraftJavaEdition) return resolve({
                                     success: false,
                                     error: {
                                         message: {
-                                            en: '',
-                                            fr: ''
+                                            en: 'You dont own Minecraft: Java Edition!',
+                                            fr: 'Vous ne possedez pas Minecraft: Java Edition!'
                                         },
-                                        stack: err
+                                        stack: 'minecraft owner ships is not passed'
                                     }
                                 });
+
+                                const minecraftItem = minecraftOwnership.items.find((item) => item.name === 'game_minecraft');
+                                const minecraftItemDecoded = parseJwt(minecraftItem.signature);
+                                const clientId = minecraftItemDecoded.signerId;
+
+                                this.getMinecraftProfile(minecraftToken).then((minecraftProfileRes) => {
+
+                                    resolve({
+                                        success: true,
+                                        data: {
+                                            clientId,
+                                            minecraftToken,
+                                            profile: {
+                                                id: minecraftProfileRes.id,
+                                                name: minecraftProfileRes.name
+                                            }
+                                        }
+                                    });
+    
+                                }).catch((err) => {
+                                    resolve({
+                                        success: false,
+                                        error: {
+                                            message: {
+                                                en: '',
+                                                fr: ''
+                                            },
+                                            stack: err
+                                        }
+                                    });
+                                });
+
                             });
 
                         }).catch((err) => {
@@ -217,6 +247,25 @@ const microsoft = {
             }, (err, res, body) => {
                 if(err) reject(err);
 
+                resolve(body);
+            });
+        });
+    },
+
+    getMinecraftOwnership (token) {
+        const url = 'https://api.minecraftservices.com/entitlements/mcstore';
+  
+        return new Promise((resolve, reject) => {
+            request({
+                url,
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                json: true
+            }, (err, res, body) => {
+                if(err) reject(err);
+      
                 resolve(body);
             });
         });

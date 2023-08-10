@@ -118,6 +118,7 @@ function getCommandLine(javaPath) {
     const playerName = getUserData().profile.name;
     const playerUuid = getUserData().profile.id;
     const accessToken = getUserData().minecraftToken;
+    const clientId = getUserData().clientId;
     const minRam = getAllocatedRam().min;
     const maxRam = getAllocatedRam().max;
     const jvmOptions = getJvmOptions();
@@ -175,7 +176,8 @@ function getCommandLine(javaPath) {
         playerUuid,
         '--accessToken',
         accessToken,
-        '--clientId 0',
+        '--clientId',
+        clientId,
         '--xuid 0',
         '--userType xbox',
         '--versionType release',
