@@ -3,61 +3,60 @@ import {AiOutlineFire, AiFillWindows, AiFillApple, AiFillClockCircle, AiOutlineL
 import {VscTerminalLinux} from 'react-icons/vsc';
 import { FaHdd, FaPlay, FaStop } from 'react-icons/fa';
 import { RxUpdate } from 'react-icons/rx';
-import { getUpdateState } from '../../utils/config';
-import GameUpdater from '../../utils/game/game-updater';
-import GameBootstraper from '../../utils/game/game-bootstraper';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPersistentState } from '../../utils/selectors';
+import { persistentSetAllowButtonClick, persistentSetProgressBar, persistentSetUpdateState } from '../../features/persistent.action';
 
 export default function ModdedS1() {
 
-    const [gameUpdater, setGameUpdater] = useState(null);
-    const [gameBootstraper, setGameBootstraper] = useState(null);
+    const persistentState = useSelector(selectPersistentState());
+    const dispatch = useDispatch();
+
     const [updateState, defUpdateState] = useState('');
     const [progressbar, setProgressbar] = useState(0);
     const [allowButtonClick, setAllowButtonClick] = useState(true);
 
     useEffect(() => {
-        defUpdateState(getUpdateState());
+        defUpdateState(persistentState.updateState);
+        setProgressbar(persistentState.progressBar);
+        setAllowButtonClick(persistentState.allowButtonClick);
 
-        // it's initializing the game bootstraper
-        const _gameBoostraper = new GameBootstraper();
-        setGameBootstraper(_gameBoostraper);
-
-        _gameBoostraper.on('updateStateChange', (newUpdateState) => {
+        persistentState.gameBootstraper.on('updateStateChange', (newUpdateState) => {
             defUpdateState(newUpdateState);
+            dispatch(persistentSetUpdateState(newUpdateState));
         });
-
-        _gameBoostraper.on('gameClosed', () => {
+        persistentState.gameBootstraper.on('gameClosed', () => {
             defUpdateState('ready');
+            dispatch(persistentSetUpdateState('ready'));
             setAllowButtonClick(true);
+            dispatch(persistentSetAllowButtonClick(true));
         });
-
-        // it's initializing the game updater
-
-        const _gameUpdater = new GameUpdater();
-        setGameUpdater(_gameUpdater);
-        _gameUpdater.on('updateStateChange', (newUpdateState) => {
+        persistentState.gameUpdater.on('updateStateChange', (newUpdateState) => {
             defUpdateState(newUpdateState);
+            dispatch(persistentSetUpdateState(newUpdateState));
             if (newUpdateState === 'ready') {
-                _gameBoostraper.run();
+                persistentState.gameBootstraper.run();
             }
         });
-
-        _gameUpdater.on('updateProgressChange', (updateProgress) => {
+        persistentState.gameUpdater.on('updateProgressChange', (updateProgress) => {
             setProgressbar(updateProgress);
+            dispatch(persistentSetProgressBar(updateProgress));
         });
     }, []);
 
     const handleTriggerUpdate = () => {
         if (!allowButtonClick) return;
         setAllowButtonClick(false);
+        dispatch(persistentSetAllowButtonClick(false));
 
         if (updateState === 'ready') {
-            gameBootstraper.run();
+            persistentState.gameBootstraper.run();
         } else {
-            gameUpdater.run();
+            persistentState.gameUpdater.run();
         }
 
         setAllowButtonClick(false);
+        dispatch(persistentSetAllowButtonClick(false));
     };
 
     const actionButtonContent = {

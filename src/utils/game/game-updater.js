@@ -140,6 +140,7 @@ export default class GameUpdater {
     }
 
     on(eventName, callback) {
+        this.events = this.events.filter((e) => e.eventName !== eventName);
         this.events.push({
             eventName,
             callback

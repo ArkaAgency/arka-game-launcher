@@ -93,6 +93,7 @@ export default class GameBootstraper {
     }
 
     on(eventName, callback) {
+        this.events = this.events.filter((e) => e.eventName !== eventName);
         this.events.push({
             eventName,
             callback
