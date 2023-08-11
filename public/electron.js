@@ -477,7 +477,8 @@ async function listenIpc() {
         });
         autoUpdater.on('update-downloaded', (info) => {
             log.info(info);
-            setImmediate(() => autoUpdater.quitAndInstall());
+            mainWindow.webContents.send('update.installing');
+            autoUpdater.quitAndInstall();
         });
     });
 }
