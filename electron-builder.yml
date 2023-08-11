@@ -4,7 +4,7 @@ artifactName: '${productName}-setup-${version}.${ext}'
 
 copyright: 'Copyright © 2023 Arka Group'
 
-asar: false
+asar: true
 compression: 'maximum'
 
 files:
