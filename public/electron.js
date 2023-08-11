@@ -3,6 +3,12 @@ const path = require('path');
 const remote = require('@electron/remote/main');
 const request = require('request');
 const dotenv = require('dotenv');
+const log = require('electron-log');
+const {autoUpdater} = require('electron-updater');
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -313,7 +319,6 @@ function createWindow() {
     remote.enable(mainWindow.webContents);
 }
 
-
 /**
  * Instantiate the microsoft login window
  * @date 7/30/2023 - 6:01:38 AM
@@ -437,12 +442,51 @@ async function listenIpc() {
         }
         createWindow();
     });
+
+    /*
+            update system
+        */
+
+    ipc.handle('check-for-updates', () => {
+        autoUpdater.checkForUpdatesAndNotify();
+    
+        autoUpdater.on('checking-for-update', () => {
+            mainWindow.webContents.send('update.checking');
+        });
+        autoUpdater.on('update-available', (info) => {
+            log.info(info);
+            mainWindow.webContents.send('update.results.isAvailable');
+            autoUpdater.downloadUpdate();
+        });
+        autoUpdater.on('update-not-available', (info) => {
+            log.info(info);
+            mainWindow.webContents.send('update.results.isUpToDate');
+        });
+        autoUpdater.on('error', (err) => {
+            mainWindow.webContents.send('update.results.error', err);
+        });
+        autoUpdater.on('download-progress', (progressObj) => {
+            log.info(progressObj);
+            mainWindow.webContents.send('update.download.infos', {
+                status: 'downloading',
+                percentage: progressObj.percent,
+                speed: progressObj.bytesPerSecond,
+                done: progressObj.transferred,
+                total: progressObj.total
+            });
+        });
+        autoUpdater.on('update-downloaded', (info) => {
+            log.info(info);
+            setImmediate(() => autoUpdater.quitAndInstall());
+        });
+    });
 }
 
 // waiting for app to be ready to create window and listen to the ipc protocol
-app.on('ready', createWindow);
+app.on('ready', () => {
+    createWindow();
+});
 app.on('ready', async () => listenIpc());
-
 // it's handling app closure
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
