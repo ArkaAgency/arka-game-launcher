@@ -449,6 +449,7 @@ async function listenIpc() {
 
     ipc.handle('check-for-updates', () => {
         autoUpdater.checkForUpdatesAndNotify();
+        autoUpdater.autoInstallOnAppQuit = true;
     
         autoUpdater.on('checking-for-update', () => {
             mainWindow.webContents.send('update.checking');
@@ -472,13 +473,25 @@ async function listenIpc() {
                 percentage: progressObj.percent,
                 speed: progressObj.bytesPerSecond,
                 done: progressObj.transferred,
-                total: progressObj.total
+                total: progressObj.total,
+                progressObj
             });
         });
-        autoUpdater.on('update-downloaded', (info) => {
-            log.info(info);
-            mainWindow.webContents.send('update.installing');
-            autoUpdater.quitAndInstall();
+        autoUpdater.on('update-downloaded', () => {
+            const dialogOpts = {
+                type: 'info',
+                buttons: ['Redemarrer', 'Plus tard'],
+                title: 'Mise a jour du Launcher',
+                message: 'Yeah!!',
+                detail:
+                  'Une nouvelle version a ete telechargee, redemarrez l\'application pour appliquer les changements.'
+            };
+            
+            electron.dialog.showMessageBox(dialogOpts).then((returnValue) => {
+                if (returnValue.response === 0) autoUpdater.quitAndInstall();
+                if (returnValue.response === 0) mainWindow.webContents.send('update.install');
+                mainWindow.webContents.send('update.done');
+            });
         });
     });
 }

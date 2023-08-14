@@ -9,6 +9,7 @@ import { ipcRenderer } from 'electron';
 export default function Bootstrap() {
 
     const [isUpdating, setIsUpdating] = useState(true);
+    // eslint-disable-next-line
     const [downloadInfos, setDownloadInfos] = useState({
         status: 'check',
         percentage: 0,
@@ -28,17 +29,16 @@ export default function Bootstrap() {
     };
 
     useEffect(() => {
-        ipcRenderer.invoke('check-for-updates');
+        return bootstrapApp();
+
+        /* ipcRenderer.invoke('check-for-updates');
 
         ipcRenderer.on('update.results.isUpToDate', () => {
             bootstrapApp();
         });
 
-        ipcRenderer.on('update.installing', () => {
-            setDownloadInfos({
-                ...downloadInfos,
-                status: 'install'
-            });
+        ipcRenderer.on('update.done', () => {
+            bootstrapApp();
         });
 
         ipcRenderer.on('update.results.error', (event, error) => {
@@ -46,8 +46,9 @@ export default function Bootstrap() {
         });
 
         ipcRenderer.on('update.download.infos', (event, progressData) => {
+            console.log(progressData);
             setDownloadInfos(progressData);
-        });
+        }); */
     });
 
     return isUpdating ? <div className="flex justify-center flex-wrap items-center h-full w-full">

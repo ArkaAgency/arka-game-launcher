@@ -1,6 +1,6 @@
 {
   "name": "arka-game-launcher",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "The Arka Game launcher is an App that gives the permission to download the Game packs to play on our servers such as Modded Minecraft Server or RP GTA via FiveM.",
   "private": true,
   "main": "public/electron.js",

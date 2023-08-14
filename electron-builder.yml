@@ -13,7 +13,6 @@ files:
 extraResources:
   - 'libraries'
 
-# Windows Configuration
 win: 
   target: 
     - target: 'nsis'
@@ -23,31 +22,11 @@ win:
       protocol: https
       owner: alexandrelg2022
 
-# Windows Installer Configuration
 nsis:
   oneClick: false
   perMachine: false
   allowElevation: true
   allowToChangeInstallationDirectory: true
-
-# macOS Configuration
-mac:
-  target:
-    - target: 'dmg'
-      arch:
-        - 'x64'
-        - 'arm64'
-  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
-  category: 'public.app-category.games'
-
-# Linux Configuration
-linux: 
-  target: 'AppImage'
-  maintainer: 'Arka Group'
-  vendor: 'Arka Group'
-  synopsis: 'Modded Minecraft Launcher for Arka Minecraft Server'
-  description: 'Modded Minecraft Launcher for Arka Minecraft Server'
-  category: 'Game'
 
 
 directories:
