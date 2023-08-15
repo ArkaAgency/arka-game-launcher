@@ -14,49 +14,28 @@ export default class GameUpdater {
 
     async run() {
         // init
-        let firstPassed = false;
         this.emit(Events.UpdateStateChange, 'loading');
 
         // it's checking java files
         const javaFiles = await getJavaFiles();
         if (!javaFiles.success) return alert('erreur a handler');
-        this.createFolders(javaFiles.folders, 'java/');
+        await this.createFolders(javaFiles.folders, 'java/');
 
         // it's checking game files
         const gameFiles = await getGameFiles();
         if (!gameFiles.success) return alert('erreur a handler');
-        this.createFolders(gameFiles.folders);
+        await this.createFolders(gameFiles.folders);
 
         // it's checking mods files
         const modsFiles = await getModsFiles();
         if (!modsFiles.success) return alert('erreur a handler');
-        this.createFolders(modsFiles.folders);
+        await this.createFolders(modsFiles.folders);
 
         // it's running java download / verification
         this.emit(Events.UpdateStateChange, 'checking');
         await this.processVerification(modsFiles.files, 'mods/remote/');
         await this.processVerification(javaFiles.files, 'java/');
         await this.processVerification(gameFiles.files);
-        if (this.filesToDownload.length === 0) 
-            firstPassed = true;
-
-        if (!firstPassed) {
-            // it's running the download process
-            await this.processDownload();
-            this.filesToDownload = [];
-
-            // download finished, re-verify
-            // it's running java download / verification
-            this.emit(Events.UpdateStateChange, 'checking');
-            await this.processVerification(modsFiles.files, 'mods/remote/');
-            await this.processVerification(javaFiles.files, 'java/');
-            await this.processVerification(gameFiles.files);
-
-            // check files OK re download if needed
-            if (this.filesToDownload > 0) {
-                await this.processDownload();
-            }
-        }
 
         // allow client to run the game
         this.emit(Events.UpdateStateChange, 'ready');
@@ -88,15 +67,16 @@ export default class GameUpdater {
         });
     }
 
-    processVerification(files, prefix='') {
-        return new Promise((resolve) => {
-            files.forEach((file) => {
+    async processVerification(files, prefix='') {
+        // eslint-disable-next-line no-async-promise-executor
+        return new Promise(async (resolve) => {
+            for await (const file of files) {
                 const filename = getFileOrFolderPath(`${prefix}${file.filename}`);
                 if (fs.existsSync(filename)) {
-                    const fileBuffer = fs.readFileSync(filename);
+                    const fileBuffer = await fs.promises.readFile(filename);
                     const fileHash = createHash('md5').update(fileBuffer).digest('hex');
-                    if (fileHash === file.md5) return;
-                    fs.rmSync(filename);
+                    if (fileHash === file.md5) continue;
+                    await fs.promises.rm(filename);
                     this.filesToDownload.push({
                         ...file,
                         filename
@@ -105,19 +85,19 @@ export default class GameUpdater {
                     ...file,
                     filename
                 });
-            });
+            }
             resolve();
         });
     }
 
-    createFolders(folders, prefix='') {
+    async createFolders(folders, prefix='') {
         if (!fs.existsSync(getFileOrFolderPath(prefix))) 
-            fs.mkdirSync(getFileOrFolderPath(prefix));
-        folders.forEach((folder) => {
+            await fs.promises.mkdir(getFileOrFolderPath(prefix));
+        for await (const folder of folders) {
             const folderPath = getFileOrFolderPath(`${prefix}${folder}`);
-            if (!fs.existsSync(folderPath)) 
-                fs.mkdirSync(folderPath);
-        });
+            if (!fs.existsSync(folderPath))
+                await fs.promises.mkdir(folderPath);
+        }
     }
 
     on(eventName, callback) {

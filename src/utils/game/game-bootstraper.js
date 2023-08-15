@@ -29,7 +29,7 @@ export default class GameBootstraper {
         });
 
         // gettings mods in mods folder
-        const modsInModsFolderList = fs.readdirSync(getFileOrFolderPath('mods/'));
+        const modsInModsFolderList = await fs.promises.readdir(getFileOrFolderPath('mods/'));
         const modsInModsFolder = modsInModsFolderList.filter((filename) => {
             const modFilename = getFileOrFolderPath(`mods/${filename}`);
             const fileStat = fs.statSync(modFilename);
@@ -46,24 +46,24 @@ export default class GameBootstraper {
         });
 
         // deleting unallowed mods
-        modsInModsFolder.forEach((mod) => {
+        for await (const mod of modsInModsFolder) {
             if (!pleasedMods.find((m) => m.md5 === mod.md5)) {
                 const modFilename = getFileOrFolderPath(`mods/${mod.filename}`);
-                fs.rmSync(modFilename);
+                await fs.promises.rm(modFilename);
             }
-        });
+        }
 
         // moving mods to mods folder
-        pleasedMods.forEach((mod) => {
+        for await (const mod of pleasedMods) {
             // dont copy paste mod if exists in mods folder
-            if (modsInModsFolder.find((m) => m.md5 === mod.md5)) return;
+            if (modsInModsFolder.find((m) => m.md5 === mod.md5)) continue;
 
             // copy mods
             const prefix = mod.type === 'local' ? 'local/' : ('remote/' + mod.type + '/');
             const modFilename = getFileOrFolderPath(`mods/${prefix}/${mod.filename}`);
             const modDest = getFileOrFolderPath(`mods/${mod.filename}`);
-            fs.cpSync(modFilename, modDest);
-        });
+            await fs.promises.cp(modFilename, modDest);
+        }
 
         // it's getting the java path
         const javaPath = getJavaPath();
@@ -81,10 +81,10 @@ export default class GameBootstraper {
 
         // it's creating the child process handlers
         minecraft.stdout.on('data', (data) => {
-            console.log('stdout: ', data.toString('utf-8'));
+            console.log('stdout: ', data.toString());
         });
         minecraft.stderr.on('data', (data) => {
-            console.error('stderr: ', data.toString('utf-8'));
+            console.error('stderr: ', data.toString());
         });
         minecraft.on('close', (code) => {
             this.emit(Events.GameClosed, code);
@@ -192,48 +192,6 @@ function getCommandLine(javaPath) {
         '--fml.forgeGroup net.minecraftforge',
         '--fml.mcpVersion 20230612.114412'
     ];
-
-    /*const args = [
-        javaPath,
-        `-Xmx${maxRam}M`,
-        '-XX:-UseAdaptiveSizePolicy',
-        `-Xms${minRam}M`,
-        '-XX:+IgnoreUnrecognizedVMOptions',
-        jvmOptions.trim(),
-        '-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump',
-        `-Djava.library.path=${nativesDir}`,
-        '-Dminecraft.launcher.brand=ArkaGameLauncher',
-        '-Dminecraft.launcher.version=1.0.0',
-        '-cp',
-        libs,
-        '-Djava.net.preferIPv6Addresses=system',
-        '"-DignoreList=bootstraplauncher,securejarhandler,asm-commons,asm-util,asm-analysis,asm-tree,asm,JarJarFileSystems,client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,forge-,1.20.1-forge-47.1.43.jar"',
-        '-DmergeModules=jna-5.10.0.jar,jna-platform-5.10.0.jar',
-        '-DlibraryDirectory=%libs%',
-        '-p',
-        '%libs%/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar;%libs%/cpw/mods/securejarhandler/2.1.10/securejarhandler-2.1.10.jar;%libs%/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar;%libs%/org/ow2/asm/asm-util/9.5/asm-util-9.5.jar;%libs%/org/ow2/asm/asm-analysis/9.5/asm-analysis-9.5.jar;%libs%/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar;%libs%/org/ow2/asm/asm/9.5/asm-9.5.jar;%libs%/net/minecraftforge/JarJarFileSystems/0.3.19/JarJarFileSystems-0.3.19.jar',
-        '--add-modules ALL-MODULE-PATH --add-opens java.base/java.util.jar=cpw.mods.securejarhandler',
-        '--add-opens java.base/java.lang.invoke=cpw.mods.securejarhandler --add-exports java.base/sun.security.util=cpw.mods.securejarhandler',
-        '--add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming',
-        '--launchTarget forgeclient --fml.forgeVersion 47.1.43 --fml.mcVersion 1.20.1 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20230612.114412',
-        '--username',
-        playerName,
-        '--version 1.20.1',
-        '--gameDir',
-        getFileOrFolderPath(),
-        '--assetsDir',
-        assetsDir,
-        '--assetIndex 5',
-        '--uuid',
-        playerUuid,
-        '--accessToken',
-        accessToken,
-        '--width',
-        width,
-        '--height',
-        height,
-        'cpw.mods.bootstraplauncher.BootstrapLauncher'
-    ];*/
 
     const finalOutput = args.join(' ').replaceAll('%libs%', libsDir);
     console.log(finalOutput);
