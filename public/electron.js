@@ -141,20 +141,20 @@ async function listenIpc() {
         authWindow.webContents.on('did-navigate', async () => {
             // it's checking for redirect URL
             const url = authWindow.webContents.getURL();
-            if (!url.startsWith(process.env.MICROSOFT_REDIRECT_URI)) return;
+            if (!url.startsWith('https://login.live.com/oauth20_desktop.srf')) return;
 
-            // it's getting the auth code from URL\
+            // it's getting thwe auth code from URL\
             const urlParams = (new URL(url)).searchParams;
             const code = urlParams.get('code');
 
             // it's launching the auth process
             authWindow.hide();
             const authResults = await microsoftAuthApi.auth(code);
-            
+
             // it's handling the auth results
+            authWindow = null;
             if (authResults.success) {
                 // it's clearing the window and returning the auth data to the renderer process
-                authWindow = null;
                 mainWindow.webContents.send('login.microsoft.success', authResults.userData);
             } else {
                 // it's sending the error to the renderer process
@@ -164,7 +164,6 @@ async function listenIpc() {
 
         // it's handling unknown close reason
         authWindow.webContents.on('close', () => {
-            console.log('close');
             mainWindow.webContents.send('login.microsoft.error', {
                 message: {
                     en: 'An unknown error has ocurred while performing Microsoft authentication.',
