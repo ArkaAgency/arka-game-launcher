@@ -6,8 +6,9 @@ module.exports = {
     theme: {
         extend: {
             backgroundImage: {
-                'mc-server-backdrop': 'url(\'./../public/mc-server-backdrop.gif\')'
-            }
+                'mc-server-backdrop': 'url(\'./../public/mc-server-backdrop.gif\')',
+                'baldi-backdrop': 'url(\'./../public/baldi.jpg\')'
+            },
         },
     },
     plugins: [],

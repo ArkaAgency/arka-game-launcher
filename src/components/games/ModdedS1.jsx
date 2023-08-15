@@ -75,7 +75,7 @@ export default function ModdedS1() {
         '': <>{progressbar}</>
     }[updateState];
 
-    return <div className='w-[49%] h-[320px] bg-black flex flex-col flex-wrap justify-between items-start rounded relative'>
+    return <div className='w-[48%] h-[320px] bg-black inline-flex flex-col flex-wrap justify-between items-start rounded relative mr-4'>
         <div className="absolute top-0 right-0 h-fit w-fit p-2 flex items-center justify-end">
             <h1 className='text-xs'>Arka Modded Saison 1</h1>
         </div>
