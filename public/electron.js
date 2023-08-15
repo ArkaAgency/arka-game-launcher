@@ -122,7 +122,7 @@ async function listenIpc() {
 
     // display full size window
     ipc.handle('main', () => {
-        mainWindow.setSize(1200, 690);
+        mainWindow.setSize(1450, 800);
         mainWindow.center();
     });
 
