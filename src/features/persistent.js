@@ -1,5 +1,6 @@
 import GameUpdater from '../utils/game/game-updater';
 import GameBootstraper from '../utils/game/game-bootstraper';
+import ArkaDiscordRichPresence from '../utils/discord-rpc';
 import { getUpdateState } from '../utils/config';
 import { PERSISTENT_SET_ALLOW_BUTTON_CLICK, PERSISTENT_SET_PROGRESS_BAR, PERSISTENT_SET_UPDATE_STATE } from './persistent.action';
 
@@ -9,6 +10,7 @@ const initialState = {
     updateState: getUpdateState(),
     progressBar: 0,
     allowButtonClick: true,
+    discordRpc: new ArkaDiscordRichPresence()
 };
 
 /**

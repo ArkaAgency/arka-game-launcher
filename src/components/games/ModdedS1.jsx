@@ -23,11 +23,17 @@ export default function ModdedS1() {
         persistentState.gameBootstraper.on('updateStateChange', (newUpdateState) => {
             defUpdateState(newUpdateState);
             dispatch(persistentSetUpdateState(newUpdateState));
+            if (newUpdateState === 'running') {
+                persistentState.discordRpc.setDetails('En Jeu');
+                persistentState.discordRpc.setState('Minecraft Moddé Saison 1');
+            }
         });
         persistentState.gameBootstraper.on('gameClosed', () => {
             defUpdateState('ready');
             dispatch(persistentSetUpdateState('ready'));
             setAllowButtonClick(true);
+            persistentState.discordRpc.setDetails('Dans le launcher');
+            persistentState.discordRpc.setState('Sélectionne un jeu');
             dispatch(persistentSetAllowButtonClick(true));
         });
         persistentState.gameUpdater.on('updateStateChange', (newUpdateState) => {
@@ -36,8 +42,14 @@ export default function ModdedS1() {
             if (newUpdateState === 'ready') {
                 persistentState.gameBootstraper.run();
             }
+            if (newUpdateState === 'downloading') {
+                persistentState.discordRpc.setDetails('Dans le launcher');
+                persistentState.discordRpc.setState('Téléchargement en cours (0%)');
+            }
         });
         persistentState.gameUpdater.on('updateProgressChange', (updateProgress) => {
+            persistentState.discordRpc.setDetails('Dans le launcher');
+            persistentState.discordRpc.setState('Téléchargement en cours (' + updateProgress + '%)');
             setProgressbar(updateProgress);
             dispatch(persistentSetProgressBar(updateProgress));
         });

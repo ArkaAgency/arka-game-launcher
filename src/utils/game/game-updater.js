@@ -71,7 +71,7 @@ export default class GameUpdater {
             this.emit(Events.UpdateProgressChange, 0);
 
             // download files using downloadManager class
-            const downloadManager = new DownloadManager(this.filesToDownload, 20);
+            const downloadManager = new DownloadManager(this.filesToDownload, 40);
 
             // update progress in UI on file download
             downloadManager.on('progress', (progressData) => {
@@ -194,6 +194,7 @@ class DownloadSlot{
     }
 
     async assignAndStart(file) {
+        if (file === undefined) this.emit('complete', null);
         // getting vars from the object
         const {filename, downloadLink} = file;
 
