@@ -74,8 +74,8 @@ export default class GameUpdater {
                 const filename = getFileOrFolderPath(`${prefix}${file.filename}`);
                 if (fs.existsSync(filename)) {
                     const fileBuffer = await fs.promises.readFile(filename);
-                    const fileHash = createHash('md5').update(fileBuffer).digest('hex');
-                    if (fileHash === file.md5) continue;
+                    const fileHash = createHash('sha1').update(fileBuffer).digest('base64');
+                    if (fileHash === file.sha1) continue;
                     await fs.promises.rm(filename);
                     this.filesToDownload.push({
                         ...file,

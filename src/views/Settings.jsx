@@ -171,9 +171,9 @@ export function SettingsMods() {
     }, [refreshes]);
 
     const handleModToggle = (mod) => {
-        toggleMod(mod.type, mod.md5);
+        toggleMod(mod.type, mod.sha1);
         const filteredMods = mods.map((newMod) => {
-            if (newMod.md5 === mod.md5)
+            if (newMod.sha1 === mod.sha1)
                 mod.enabled = !mod.enabled;
             return newMod;
         });
@@ -182,7 +182,7 @@ export function SettingsMods() {
 
     const handleModDeletion = (mod) => {
         deleteLocalMod(mod);
-        const filteredMods = mods.filter((m) => m.md5 !== mod.md5);
+        const filteredMods = mods.filter((m) => m.sha1 !== mod.sha1);
         setMods(filteredMods);
     };
 
@@ -220,15 +220,15 @@ export function SettingsMods() {
         <h2 className='text-xl mt-6 font-semibold'>Mods Personnalisés <button onClick={handleModImport} className='rounded text-sm p-1 m-1 bg-blue-600 hover:bg-blue-600 transition-all'>Importer</button> <button onClick={() => handleSetAllModsEnabled(ModTypes.Local, true)} className='rounded text-sm p-1 m-1 bg-green-500 hover:bg-green-600 transition-all'>Tout activer</button> <button onClick={() => handleSetAllModsEnabled(ModTypes.Local, false)} className='rounded text-sm p-1 m-1 bg-red-500 hover:bg-red-600 transition-all'>Tout désactiver</button></h2>
         <p className="text-xs text-gray-400 mb-2">Nous vous rappeleons que nous ne sommes pas responsables des crash liés aux mods personnalisés et que les mods liés à la triche ne seront pas tolérés.</p>
         <ul className='grid grid-cols-2'>
-            {mods.filter((mod) => mod.type === ModTypes.Local).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.md5}>
+            {mods.filter((mod) => mod.type === ModTypes.Local).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.sha1}>
                 <div className='w-full flex flex-nowrap items-start justify-between'>
                     <div className='group flex items-center justify-center p-2 rounded bg-blue-500 cursor-pointer hover:bg-red-500 transition-all'>
                         <LiaJava className='text-xl group-hover:hidden' />
                         <MdDelete className='text-xl hidden group-hover:block' onClick={() => handleModDeletion(mod)} />
                     </div>
                     <div className='cursor-pointer relative'>
-                        <input type="checkbox" id={mod.md5 + '_input'} checked={mod.enabled} onChange={() => handleModToggle(mod)} className="sr-only peer" />
-                        <label htmlFor={mod.md5 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
+                        <input type="checkbox" id={mod.sha1 + '_input'} checked={mod.enabled} onChange={() => handleModToggle(mod)} className="sr-only peer" />
+                        <label htmlFor={mod.sha1 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
                     </div>
                 </div>
                 <h3 className='text-sm font-semibold mt-4'>{mod.name}&nbsp;<MdVerified className='text-sm text-blue-500 inline'/>&nbsp;<span className='text-xs text-gray-400 inline'>by {mod.author}</span></h3>
@@ -238,14 +238,14 @@ export function SettingsMods() {
         <h2 className='text-xl mt-6 font-semibold'>Mods Performances <button onClick={() => handleSetAllModsEnabled(ModTypes.Performances, true)} className='rounded text-sm p-1 m-1 bg-green-500 hover:bg-green-600 transition-all'>Tout activer</button> <button onClick={() => handleSetAllModsEnabled(ModTypes.Performances, false)} className='rounded text-sm p-1 m-1 bg-red-500 hover:bg-red-600 transition-all'>Tout désactiver</button></h2>
         <p className="text-xs text-gray-400 mb-2">Ces mods améliorent grandement les performances de votre jeu. Il est vivement déconseillé de les désactiver.</p>
         <ul className='grid grid-cols-2'>
-            {mods.filter((mod) => mod.type === ModTypes.Performances).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.md5}>
+            {mods.filter((mod) => mod.type === ModTypes.Performances).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.sha1}>
                 <div className='w-full flex flex-nowrap items-start justify-between'>
                     <div className='group flex items-center justify-center p-2 rounded bg-blue-500 cursor-pointer'>
                         <LiaJava className='text-xl' />
                     </div>
                     <div className='cursor-pointer relative'>
-                        <input id={mod.md5 + '_input'} onChange={() => handleModToggle(mod)} type="checkbox" checked={mod.enabled} className="sr-only peer" />
-                        <label htmlFor={mod.md5 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
+                        <input id={mod.sha1 + '_input'} onChange={() => handleModToggle(mod)} type="checkbox" checked={mod.enabled} className="sr-only peer" />
+                        <label htmlFor={mod.sha1 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
                     </div>
                 </div>
                 <h3 className='text-sm font-semibold mt-4'>{mod.name}&nbsp;<MdVerified className='text-sm text-blue-500 inline'/>&nbsp;<span className='text-xs text-gray-400 inline'>by {mod.author}</span></h3>
@@ -255,14 +255,14 @@ export function SettingsMods() {
         <h2 className='text-xl mt-6 font-semibold'>Mods Optionnels <button onClick={() => handleSetAllModsEnabled(ModTypes.Optionnal, true)} className='rounded text-sm p-1 m-1 bg-green-500 hover:bg-green-600 transition-all'>Tout activer</button> <button onClick={() => handleSetAllModsEnabled(ModTypes.Optionnal, false)} className='rounded text-sm p-1 m-1 bg-red-500 hover:bg-red-600 transition-all'>Tout désactiver</button></h2>
         <p className="text-xs text-gray-400 mb-2">Ces mods vous donnent une meilleure expérience de jeu ainsi qu&apos;un meilleur confort. Vous pouvez les désactiver pour gagner en performances.</p>
         <ul className='grid grid-cols-2'>
-            {mods.filter((mod) => mod.type === ModTypes.Optionnal).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.md5}>
+            {mods.filter((mod) => mod.type === ModTypes.Optionnal).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.sha1}>
                 <div className='w-full flex flex-nowrap items-start justify-between'>
                     <div className='group flex items-center justify-center p-2 rounded bg-blue-500 cursor-pointer'>
                         <LiaJava className='text-xl' />
                     </div>
                     <div className='cursor-pointer relative'>
-                        <input id={mod.md5 + '_input'} onChange={() => handleModToggle(mod)} type="checkbox" checked={mod.enabled} className="sr-only peer" />
-                        <label htmlFor={mod.md5 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
+                        <input id={mod.sha1 + '_input'} onChange={() => handleModToggle(mod)} type="checkbox" checked={mod.enabled} className="sr-only peer" />
+                        <label htmlFor={mod.sha1 + '_input'} className="block w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></label>
                     </div>
                 </div>
                 <h3 className='text-sm font-semibold mt-4'>{mod.name}&nbsp;<MdVerified className='text-sm text-blue-500 inline'/>&nbsp;<span className='text-xs text-gray-400 inline'>by {mod.author}</span></h3>
@@ -272,7 +272,7 @@ export function SettingsMods() {
         <h2 className='text-xl mt-6 font-semibold'>Mods Requis</h2>
         <p className="text-xs text-gray-400 mb-2">Ces mods sont requis pour se connecter au serveur et ne sont donc pas désactivables.</p>
         <ul className='grid grid-cols-2'>
-            {mods.filter((mod) => mod.type === ModTypes.Required).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.md5}>
+            {mods.filter((mod) => mod.type === ModTypes.Required).map((mod) => <li className='m-1 p-3 rounded bg-gray-900' key={mod.sha1}>
                 <div className='w-full flex flex-nowrap items-start justify-between'>
                     <div className='group flex items-center justify-center p-2 rounded bg-blue-500 cursor-pointer'>
                         <LiaJava className='text-xl' />

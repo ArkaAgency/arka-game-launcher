@@ -24,7 +24,7 @@ export default function getModsListFromAPI() {
                     mods: data.mods.map((mod) => {
                         return new Mod({ 
                             ...mod,
-                            enabled: mod.type === ModTypes.Required || (getMods().find((m) => m.md5 === mod.md5) !== undefined)
+                            enabled: mod.type === ModTypes.Required || (getMods().find((m) => m.sha1 === mod.sha1) !== undefined)
                         });
                     })
                 });
@@ -61,7 +61,7 @@ export async function getModsListFromLocal() {
             const modFilename = getFileOrFolderPath(`mods/local/${mod}`);
             
             const modBuffer = fs.readFileSync(modFilename);
-            const modHash = createHash('md5').update(modBuffer).digest('hex');
+            const modHash = createHash('sha1').update(modBuffer).digest('base64');
 
             let jarInfos;
             try {
@@ -85,9 +85,9 @@ export async function getModsListFromLocal() {
                 name: jarInfos.name,
                 author: jarInfos.author,
                 version: jarInfos.version,
-                md5: modHash,
+                sha1: modHash,
                 filename: mod,
-                enabled: (getMods().find((m) => m.md5 === modHash) !== undefined)
+                enabled: (getMods().find((m) => m.sha1 === modHash) !== undefined)
             }));
         }
 
@@ -100,20 +100,20 @@ export async function getModsListFromLocal() {
  * @date 8/1/2023 - 1:37:39 PM
  *
  * @export
- * @param {string} md5 - the mod file md5 hex hash
+ * @param {string} sha1 - the mod file sha1 hex hash
  * @param {ModTypes} type - the mod type
  */
-export function toggleMod(type, md5) {
+export function toggleMod(type, sha1) {
     let mods = getMods();
 
-    if (mods.find((m) => m.md5 === md5))
-        setMods(mods.filter((mod) => mod.md5 !== md5));
+    if (mods.find((m) => m.sha1 === sha1))
+        setMods(mods.filter((mod) => mod.sha1 !== sha1));
 
-    if (!mods.find((m) => m.md5 === md5))
+    if (!mods.find((m) => m.sha1 === sha1))
         setMods([
             ...mods,
             {
-                type, md5
+                type, sha1
             }
         ]);
 }
@@ -133,9 +133,9 @@ export function setAllModsEnabled(modsList, type, enabled) {
 
     if (enabled) 
         modsList.filter((m) => m.type === type).forEach(m => {
-            if (mods.find((m2) => m2.md5 === m.md5) !== undefined) return;
+            if (mods.find((m2) => m2.sha1 === m.sha1) !== undefined) return;
             mods.push({
-                type: m.type, md5: m.md5
+                type: m.type, sha1: m.sha1
             });
         });
 
@@ -156,8 +156,8 @@ export function setAllModsEnabled(modsList, type, enabled) {
 export function deleteLocalMod(mod) {
     // it's removing the mod from the config if needed
     let mods = getMods();
-    if (mods.find((m) => m.md5 === mod.md5) !== undefined)
-        mods = mods.filter((m) => m.md5 !== mod.md5);
+    if (mods.find((m) => m.sha1 === mod.sha1) !== undefined)
+        mods = mods.filter((m) => m.sha1 !== mod.sha1);
     setMods(mods);
 
     // it's deleting the mod from local folder
@@ -187,14 +187,14 @@ export class Mod {
      * @date 7/31/2023 - 7:19:24 PM
      *
      * @constructor
-     * @param {{ name?: string; description?: string; author?: string; version?: string; forgeVersion?: string; filename?: string; md5?: string; type?: string; enabled?: boolean }} {
+     * @param {{ name?: string; description?: string; author?: string; version?: string; forgeVersion?: string; filename?: string; sha1?: string; type?: string; enabled?: boolean }} {
             name = 'Unknown',
             description = 'Unknown',
             author = 'Unknown',
             version = 'Unknown',
             forgeVersion = 'Unknown',
             filename = 'nomod.jar',
-            md5 = 'Unknown'
+            sha1 = 'Unknown'
             type = 'required'
             enabled = true
         }
@@ -206,7 +206,7 @@ export class Mod {
         version = 'Unknown',
         forgeVersion = 'Unknown',
         filename = 'nomod.jar',
-        md5 = 'Unknown',
+        sha1 = 'Unknown',
         hash = 'Unknown',
         type = 'required',
         enabled = true
@@ -217,7 +217,7 @@ export class Mod {
         this.version = version;
         this.forgeVersion = forgeVersion;
         this.filename = filename;
-        this.md5 = md5 || hash;
+        this.sha1 = sha1 || hash;
         this.type = type;
         this.enabled = enabled;
     }

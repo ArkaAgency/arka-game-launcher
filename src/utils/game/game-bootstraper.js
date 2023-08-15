@@ -37,17 +37,17 @@ export default class GameBootstraper {
         }).map((filename) => {
             const modFilename = getFileOrFolderPath(`mods/${filename}`);
             const modBuffer = fs.readFileSync(modFilename);
-            const modHash = createHash('md5').update(modBuffer).digest('hex');
+            const modHash = createHash('sha1').update(modBuffer).digest('base64');
 
             return {
-                md5: modHash,
+                sha1: modHash,
                 filename
             };
         });
 
         // deleting unallowed mods
         for await (const mod of modsInModsFolder) {
-            if (!pleasedMods.find((m) => m.md5 === mod.md5)) {
+            if (!pleasedMods.find((m) => m.sha1 === mod.sha1)) {
                 const modFilename = getFileOrFolderPath(`mods/${mod.filename}`);
                 await fs.promises.rm(modFilename);
             }
@@ -56,7 +56,7 @@ export default class GameBootstraper {
         // moving mods to mods folder
         for await (const mod of pleasedMods) {
             // dont copy paste mod if exists in mods folder
-            if (modsInModsFolder.find((m) => m.md5 === mod.md5)) continue;
+            if (modsInModsFolder.find((m) => m.sha1 === mod.sha1)) continue;
 
             // copy mods
             const prefix = mod.type === 'local' ? 'local/' : ('remote/' + mod.type + '/');
