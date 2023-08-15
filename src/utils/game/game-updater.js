@@ -67,43 +67,24 @@ export default class GameUpdater {
         // eslint-disable-next-line
         return new Promise(async (resolve) => {
             // init state update
-            this.globalProgress = 0;
             this.emit(Events.UpdateStateChange, 'downloading');
             this.emit(Events.UpdateProgressChange, 0);
 
-            // init vars
-            const initialFilesLength = this.filesToDownload.length;
-            let downloadedFilesCount = 0;
+            // download files using downloadManager class
+            const downloadManager = new DownloadManager(this.filesToDownload, 20);
 
-            // process DL
-            for await (const file of this.filesToDownload) {
-                // getting vars from the object
-                const {filename, downloadLink} = file;
+            // update progress in UI on file download
+            downloadManager.on('progress', (progressData) => {
+                this.emit(Events.UpdateProgressChange, progressData.percentage);
+            });
 
-                // downloading file
-                const downloadedFile = await axios.get(downloadLink, {
-                    responseType: 'arraybuffer'
-                }).catch((err) => {
-                    console.error('ERROR WHILE DOWNLOADING FILE', err);
-                });
-                
-                // copying file data
-                const fileBuffer = Buffer.from(downloadedFile.data, 'binary');
-                fs.writeFileSync(filename, fileBuffer);
+            // resolve when finished
+            downloadManager.on('finished', () => {
+                resolve();
+            });
 
-                // calculating the count
-                downloadedFilesCount++;
-                const newPercentage = Math.round(
-                    (downloadedFilesCount / initialFilesLength) * 100
-                );
-                if (newPercentage !== this.globalProgress) {
-                    this.globalProgress = newPercentage;
-                    this.emit(Events.UpdateProgressChange, this.globalProgress);
-                }
-            }
-
-            // resolve at the end
-            resolve();
+            // start download
+            downloadManager.start();
         });
     }
 
@@ -137,6 +118,98 @@ export default class GameUpdater {
             if (!fs.existsSync(folderPath)) 
                 fs.mkdirSync(folderPath);
         });
+    }
+
+    on(eventName, callback) {
+        this.events = this.events.filter((e) => e.eventName !== eventName);
+        this.events.push({
+            eventName,
+            callback
+        });
+        return 0;
+    }
+
+    emit(eventName, eventData) {
+        this.events.forEach((e) => {
+            if (e.eventName === eventName) {
+                e.callback(eventData);
+            }
+        });
+    }
+}
+
+class DownloadManager {
+    constructor(files, slotsNumber=20) {
+        this.files = files;
+        this.totalFiles = files.length;
+        this.remaingFiles = files.length;
+        this.slots = [];
+        this.slotsNumber = slotsNumber;
+        this.events = [];
+    }
+
+    start() {
+        for (let i = 0; i < this.slotsNumber; i++) {
+            const newSlotFile = this.files.shift();
+            const slot = new DownloadSlot();
+            slot.on('complete', () => {
+                this.onSlotComplete(slot);
+            });
+            slot.assignAndStart(newSlotFile);
+            this.slots.push(slot);
+        }
+    }
+
+    onSlotComplete(slot) {
+        this.remaingFiles--;
+        this.emit('progress', {
+            percentage: Math.round(((this.totalFiles - this.remaingFiles) / this.totalFiles) * 100) || 0
+        });
+        if (this.remaingFiles === 0) return this.emit('finished', null);
+        const newSlotFile = this.files.shift();
+        slot.assignAndStart(newSlotFile);
+    }
+
+    on(eventName, callback) {
+        this.events = this.events.filter((e) => e.eventName !== eventName);
+        this.events.push({
+            eventName,
+            callback
+        });
+        return 0;
+    }
+
+    emit(eventName, eventData) {
+        this.events.forEach((e) => {
+            if (e.eventName === eventName) {
+                e.callback(eventData);
+            }
+        });
+    }
+}
+
+class DownloadSlot{
+    constructor() {
+        this.events = [];
+    }
+
+    async assignAndStart(file) {
+        // getting vars from the object
+        const {filename, downloadLink} = file;
+
+        // downloading file
+        const downloadedFile = await axios.get(downloadLink, {
+            responseType: 'arraybuffer'
+        }).catch((err) => {
+            console.error('ERROR WHILE DOWNLOADING FILE', err);
+        });
+
+        // copying file data
+        const fileBuffer = Buffer.from(downloadedFile.data, 'binary');
+        fs.writeFileSync(filename, fileBuffer);
+
+        // slot complete event
+        this.emit('complete', null);
     }
 
     on(eventName, callback) {
