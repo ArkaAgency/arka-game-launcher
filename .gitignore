@@ -23,3 +23,9 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+logs/
+patchouli_books/
+patchouli_data.json
+schematics/
+config/
