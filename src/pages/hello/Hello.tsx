@@ -1,6 +1,14 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../features/layout/Header';
 
 export default function HelloPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate('/auth', { replace: true });
+  }, [navigate]);
+
   return (
     <>
       <Header />
