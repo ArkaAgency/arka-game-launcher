@@ -1,6 +1,5 @@
 import { Minus, XIcon } from 'lucide-react';
-import arkaIcon from '../../images/arkaicon.png';
-import gameLauncherBanner from '../../images/gamelauncher.png';
+import keplerIcon from '../../images/keplericon.png';
 
 function DragRegion() {
   return <div id="drag" className="absolute left-0 top-0 bottom-0 right-28" />;
@@ -41,12 +40,7 @@ export default function Header() {
   return (
     <header className="w-full h-14 pl-2 flex items-center justify-between relative border-b border-b-gray-800 bg-black/50">
       <div className="flex items-center p-2">
-        <img src={arkaIcon} alt="Arka Agency Icon" className="h-6 mr-2" />
-        <img
-          src={gameLauncherBanner}
-          alt="Game Launcher App Banner"
-          className="h-10"
-        />
+        <img src={keplerIcon} alt="Kepler Studio Icon" className="h-10 mr-2" />
       </div>
       <HeaderButtons />
       <DragRegion />

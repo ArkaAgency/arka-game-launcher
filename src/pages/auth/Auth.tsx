@@ -1,10 +1,12 @@
-import { Mail } from 'lucide-react';
+import { InfoIcon, Mail } from 'lucide-react';
 import Header from '../../features/layout/Header';
 import appleIcon from '../../images/apple_icon.png';
 import googleIcon from '../../images/google_icon.png';
 import microsoftIcon from '../../images/microsoft_icon.png';
 
 export default function AuthPage() {
+  const handleMicrosoft = () => {};
+
   return (
     <>
       <Header />
@@ -12,39 +14,42 @@ export default function AuthPage() {
         <div className="bg-black/50 rounded-lg p-5 max-w-[400px] ">
           <div className="mb-4">
             <h2 className="font-bold text-center text-lg mb-1">
-              Create a free account
+              Let&apos;s Sign In
             </h2>
             <p className="text-center text-sm">
-              Create your Arka account now to discover our fantastic gaming
-              projects!
+              Sign In to your Kepler Studio account now to discover our
+              fantastic gaming projects!
             </p>
           </div>
           <div className="mb-4">
             <button
-              className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200"
+              className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200 disabled:text-gray-700 disabled:cursor-not-allowed"
               type="button"
+              disabled
             >
               <img
                 src={googleIcon}
                 alt="Google Icon"
-                className="absolute left-6 top-4 bottom-4 h-5 w-5"
+                className="absolute left-6 top-4 bottom-4 h-5 w-5 grayscale opacity-50"
               />
               Sign up with Google
             </button>
             <button
-              className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200"
+              className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200 disabled:text-gray-700 disabled:cursor-not-allowed"
               type="button"
+              disabled
             >
               <img
                 src={appleIcon}
                 alt="Apple Icon"
-                className="absolute left-6 top-4 bottom-4 h-5 w-4"
+                className="absolute left-6 top-4 bottom-4 h-5 w-4  grayscale opacity-50"
               />
               Sign up with Apple
             </button>
             <button
-              className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200"
+              className="group relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200 hover:bg-gray-900 transition-all duration-200"
               type="button"
+              onClick={handleMicrosoft}
             >
               <img
                 src={microsoftIcon}
@@ -52,6 +57,9 @@ export default function AuthPage() {
                 className="absolute left-6 top-4 bottom-4 h-5 w-5"
               />
               Sign up with Microsoft
+              <span className="absolute right-0 -bottom-5 flex items-center gap-1 text-sm bg-blue-600 p-1 px-2 rounded transition-all duration-300 opacity-100 translate-x-0  group-hover:translate-x-72 group-hover:opacity-0">
+                <InfoIcon size={18} /> Recommended for Cobblemon
+              </span>
             </button>
           </div>
           <div className="mb-4 flex items-center justify-center gap-2">
@@ -64,28 +72,30 @@ export default function AuthPage() {
           <div>
             <input
               type="text"
-              className="border border-gray-600 font-normal p-3 bg-transparent w-full rounded-lg mb-3"
+              className="border border-gray-600 font-normal p-3 bg-transparent w-full rounded-lg mb-3 disabled:placeholder:text-gray-600 disabled:cursor-not-allowed"
               placeholder="Enter your mail address here"
+              disabled
             />
             <button
-              className="relative w-full bg-gray-200 text-black rounded-lg font-medium p-3 mb-4"
+              className="relative w-full bg-gray-200 text-black rounded-lg font-medium p-3 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
               type="button"
+              disabled
             >
               <Mail className="absolute left-6 top-3 bottom-2" scale="icon" />
-              Sign up with email
+              Continue with email
             </button>
             <div className="flex items-center justify-center mb-5">
               <p className="text-center w-3/4 text-sm text-gray-400">
                 By proceeding, you agree to our{' '}
                 <a
-                  href="https://arka-group.io/terms?origin=games"
+                  href="https://kepler-studio.com/terms?origin=games"
                   className="text-gray-200 hover:underline"
                 >
                   Terms
                 </a>{' '}
                 and{' '}
                 <a
-                  href="https://arka-group.io/privacy?origin=games"
+                  href="https://kepler-studio.com/privacy?origin=games"
                   className="text-gray-200 hover:underline"
                 >
                   Privacy Policy
@@ -93,15 +103,16 @@ export default function AuthPage() {
                 .
               </p>
             </div>
+            {/* 
             <p className="text-center text-sm font-medium text-gray-400">
               Already have an account?{' '}
               <a
-                href="https://arka-group.io/privacy?origin=games"
+                href="https://kepler-studio.com/privacy?origin=games"
                 className="text-blue-500 hover:underline"
               >
                 Log In
               </a>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
