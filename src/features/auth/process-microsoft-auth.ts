@@ -26,14 +26,14 @@ export type UserData = {
   };
 };
 
-type MicrosoftAuthResponse =
+export type MicrosoftAuthResponse =
   | { success: true; userData: UserData }
   | { success: false; userData?: undefined };
 
 /**
  * It's writing a given userData object in the launcher data folder as userData.json
  */
-function writeUserData(userData: UserData): boolean {
+export function writeUserData(userData: UserData): boolean {
   try {
     const keplerPath = getKeplerPath();
     if (!fs.existsSync(keplerPath)) {
@@ -55,6 +55,10 @@ function writeUserData(userData: UserData): boolean {
 export async function processMicrosoftAuth(code: string): Promise<boolean> {
   const response = await fetch(
     `${process.env.API_HOSTNAME}/auth/microsoft/process-auth/${code}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    },
   );
 
   if (!response.ok)
