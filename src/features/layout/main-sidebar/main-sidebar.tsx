@@ -1,10 +1,9 @@
 import { SettingsIcon } from 'lucide-react';
 import clsx from 'clsx';
-import defaultProfilePicture from '../../../images/default_pfp.jpg';
+import { useEffect, useState } from 'react';
 import cobblemonIcon from '../../../images/cobblemon.png';
 import backroomIcon from '../../../images/backrooms.jpg';
 import baldiIcon from '../../../images/baldi.jpg';
-import { useEffect, useState } from 'react';
 import { UserData } from '../../auth/process-microsoft-auth';
 import renderGetUserData from '../../renderer-api/user-data.caller';
 

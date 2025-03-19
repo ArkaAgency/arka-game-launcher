@@ -13,6 +13,7 @@ import getMicrosoftWindow from './windows/microsoft.window';
 import getMainWindow from './windows/main.window';
 import listenSetWindowMaximised from './listeners/set-window-maximised.listener';
 import handleGetUserData from './handlers/user-data.handler';
+import handleAuthDisconnect from './handlers/auth-disconnect.handler';
 
 dotenv.config();
 
@@ -81,6 +82,7 @@ const createWindow = async () => {
   handleMicrosoftAuth(ipcMain, microsoftWindow);
   handleCheckAuth(ipcMain);
   handleGetUserData(ipcMain);
+  handleAuthDisconnect(ipcMain);
 
   // eslint-disable-next-line
   new AppUpdater();
