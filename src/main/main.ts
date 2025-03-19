@@ -12,6 +12,7 @@ import listenClose from './listeners/close.listener';
 import listenSetSize from './listeners/set-size.listener';
 import getMicrosoftWindow from './windows/microsoft.window';
 import getMainWindow from './windows/main.window';
+import listenSetWindowMaximised from './listeners/set-window-maximised.listener';
 
 dotenv.config();
 
@@ -74,6 +75,7 @@ const createWindow = async () => {
   });
 
   listenMinimize(ipcMain, mainWindow);
+  listenSetWindowMaximised(ipcMain, mainWindow);
   listenClose(ipcMain);
   listenSetSize(ipcMain, mainWindow);
 

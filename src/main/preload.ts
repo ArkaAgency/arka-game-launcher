@@ -7,7 +7,7 @@ export type Channels =
   | 'minimize'
   | 'microsoft-auth'
   | 'set-size'
-  | 'get-application-path';
+  | 'set-window-maximised';
 
 const electronHandler = {
   ipcRenderer: {
