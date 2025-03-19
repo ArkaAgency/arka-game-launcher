@@ -4,6 +4,9 @@ import defaultProfilePicture from '../../../images/default_pfp.jpg';
 import cobblemonIcon from '../../../images/cobblemon.png';
 import backroomIcon from '../../../images/backrooms.jpg';
 import baldiIcon from '../../../images/baldi.jpg';
+import { useEffect, useState } from 'react';
+import { UserData } from '../../auth/process-microsoft-auth';
+import renderGetUserData from '../../renderer-api/user-data.caller';
 
 export default function MainSidebar({
   view,
@@ -12,6 +15,19 @@ export default function MainSidebar({
   view: string;
   onViewChange: (v: string) => void;
 }) {
+  const [userData, setUserData] = useState<UserData>();
+
+  useEffect(() => {
+    renderGetUserData()
+      .then((data) => {
+        if (data) setUserData(data);
+        return data;
+      })
+      .catch((err) => {
+        return err;
+      });
+  });
+
   return (
     <nav className="w-fit h-full bg-black/25 py-6 px-4 flex flex-col items-center justify-between">
       <button
@@ -23,7 +39,7 @@ export default function MainSidebar({
         onClick={() => onViewChange('profile')}
       >
         <img
-          src={defaultProfilePicture}
+          src={`https://mc-heads.net/avatar/${userData?.profile.id}/100`}
           className="aspect-square w-16 rounded-xl"
           alt="Profile"
         />

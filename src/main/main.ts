@@ -1,7 +1,6 @@
 import { BrowserWindow, app, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
-import path from 'path';
 import dotenv from 'dotenv';
 import { resolveHtmlPath } from './util';
 import handleCheckAuth from './handlers/auth-checker.handler';
@@ -13,10 +12,9 @@ import listenSetSize from './listeners/set-size.listener';
 import getMicrosoftWindow from './windows/microsoft.window';
 import getMainWindow from './windows/main.window';
 import listenSetWindowMaximised from './listeners/set-window-maximised.listener';
+import handleGetUserData from './handlers/user-data.handler';
 
 dotenv.config();
-
-const keplerPath = path.join(app.getPath('appData'), '.kepler');
 
 class AppUpdater {
   constructor() {
@@ -82,6 +80,7 @@ const createWindow = async () => {
   // It's initializing handlers
   handleMicrosoftAuth(ipcMain, microsoftWindow);
   handleCheckAuth(ipcMain);
+  handleGetUserData(ipcMain);
 
   // eslint-disable-next-line
   new AppUpdater();
@@ -104,5 +103,6 @@ app
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
     });
+    return {};
   })
   .catch(console.log);
