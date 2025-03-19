@@ -1,18 +1,21 @@
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
 import { BrowserWindow, app, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
+import dotenv from 'dotenv';
 import { resolveHtmlPath } from './util';
+import handleCheckAuth from './handlers/auth-checker.handler';
+import handleMicrosoftAuth from './handlers/microsoft-auth.handler';
+import listenReadyToShow from './listeners/ready-to-show.listener';
+import listenMinimize from './listeners/minimize.listener';
+import listenClose from './listeners/close.listener';
+import listenSetSize from './listeners/set-size.listener';
+import getMicrosoftWindow from './windows/microsoft.window';
+import getMainWindow from './windows/main.window';
+
+dotenv.config();
+
+const keplerPath = path.join(app.getPath('appData'), '.kepler');
 
 class AppUpdater {
   constructor() {
@@ -23,6 +26,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let microsoftWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -50,56 +54,32 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  if (isDebug) {
+  /* if (isDebug) {
     await installExtensions();
-  }
+  } */
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
+  // It's importing the windows
+  mainWindow = getMainWindow();
+  microsoftWindow = getMicrosoftWindow();
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1200,
-    height: 820,
-    titleBarStyle: 'hidden',
-    icon: getAssetPath('icon.png'),
-    webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
-      devTools: false,
-    },
-  });
-
+  // It's loading base window
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
-  });
+  // It's initializing listeners
+  listenReadyToShow(mainWindow);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
     process.exit(0);
   });
 
-  ipcMain.on('minimize', () => {
-    mainWindow?.minimize();
-  });
-  ipcMain.on('close', () => {
-    process.exit(0);
-  });
+  listenMinimize(ipcMain, mainWindow);
+  listenClose(ipcMain);
+  listenSetSize(ipcMain, mainWindow);
+
+  // It's initializing handlers
+  handleMicrosoftAuth(ipcMain, microsoftWindow);
+  handleCheckAuth(ipcMain);
 
   // eslint-disable-next-line
   new AppUpdater();

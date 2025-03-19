@@ -1,16 +1,66 @@
-import { InfoIcon, Mail } from 'lucide-react';
+import { useEffect, useTransition } from 'react';
+import { InfoIcon, LoaderIcon, Mail } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../features/layout/Header';
 import appleIcon from '../../images/apple_icon.png';
 import googleIcon from '../../images/google_icon.png';
 import microsoftIcon from '../../images/microsoft_icon.png';
+import rendererIsAuthenticated from '../../features/renderer-api/auth-checker.caller';
 
 export default function AuthPage() {
-  const handleMicrosoft = () => {};
+  const navigate = useNavigate();
+  const [loading, startLoading] = useTransition();
+
+  const authenticationDone = () => {
+    window.electron.ipcRenderer.sendMessage('set-size', {
+      w: 1200,
+      h: 720,
+    });
+    navigate('/home', { replace: true });
+  };
+
+  useEffect(() => {
+    rendererIsAuthenticated()
+      .then((isAuthenticated) => {
+        if (isAuthenticated) {
+          window.electron.ipcRenderer.sendMessage('set-size', {
+            w: 1200,
+            h: 720,
+          });
+          navigate('/home', { replace: true });
+        } else {
+          window.electron.ipcRenderer.sendMessage('set-size', {
+            w: 580,
+            h: 720,
+          });
+        }
+        return isAuthenticated;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }, [navigate]);
+
+  const handleMicrosoft = () => {
+    startLoading(() => {
+      window.electron.ipcRenderer
+        .invoke('microsoft-auth')
+        .then((data) => {
+          if (data.success) {
+            authenticationDone();
+          }
+          return data;
+        })
+        .catch((err) => {
+          return err;
+        });
+    });
+  };
 
   return (
     <>
       <Header />
-      <div className="flex items-center justify-center h-full w-full">
+      <div className="flex items-center justify-center h-full w-full overflow-hidden">
         <div className="bg-black/50 rounded-lg p-5 max-w-[400px] ">
           <div className="mb-4">
             <h2 className="font-bold text-center text-lg mb-1">
@@ -32,7 +82,7 @@ export default function AuthPage() {
                 alt="Google Icon"
                 className="absolute left-6 top-4 bottom-4 h-5 w-5 grayscale opacity-50"
               />
-              Sign up with Google
+              Continue with Google
             </button>
             <button
               className="relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200 disabled:text-gray-700 disabled:cursor-not-allowed"
@@ -44,7 +94,7 @@ export default function AuthPage() {
                 alt="Apple Icon"
                 className="absolute left-6 top-4 bottom-4 h-5 w-4  grayscale opacity-50"
               />
-              Sign up with Apple
+              Continue with Apple
             </button>
             <button
               className="group relative w-full h-14 rounded-lg border-2 border-gray-700 mb-3 font-medium text-slate-200 hover:bg-gray-900 transition-all duration-200"
@@ -56,7 +106,8 @@ export default function AuthPage() {
                 alt="Microsoft Icon"
                 className="absolute left-6 top-4 bottom-4 h-5 w-5"
               />
-              Sign up with Microsoft
+              {loading ? <LoaderIcon className="animate-spin" /> : ''}Continue
+              with Microsoft
               <span className="absolute right-0 -bottom-5 flex items-center gap-1 text-sm bg-blue-600 p-1 px-2 rounded transition-all duration-300 opacity-100 translate-x-0  group-hover:translate-x-72 group-hover:opacity-0">
                 <InfoIcon size={18} /> Recommended for Cobblemon
               </span>

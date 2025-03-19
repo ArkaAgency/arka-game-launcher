@@ -2,7 +2,12 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'close' | 'minimize';
+export type Channels =
+  | 'close'
+  | 'minimize'
+  | 'microsoft-auth'
+  | 'set-size'
+  | 'get-application-path';
 
 const electronHandler = {
   ipcRenderer: {
@@ -21,9 +26,15 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    invoke: (channel: string, ...args: unknown[]) =>
+      ipcRenderer.invoke(channel, ...args),
   },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  microsoftAuth: (url: string) => ipcRenderer.send('microsoft-auth', url),
+});
 
 export type ElectronHandler = typeof electronHandler;

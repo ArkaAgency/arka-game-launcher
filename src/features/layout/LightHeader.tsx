@@ -1,7 +1,6 @@
 import { Minus, XIcon } from 'lucide-react';
-import keplerIcon from '../../images/keplericon.png';
 
-export function DragRegion() {
+function DragRegion() {
   return <div id="drag" className="absolute left-0 top-0 bottom-0 right-28" />;
 }
 
@@ -36,14 +35,13 @@ function HeaderButtons() {
   );
 }
 
-export default function Header() {
+export default function LightHeader() {
   return (
-    <header className="w-full h-14 pl-2 flex items-center justify-between relative border-b border-b-gray-800 bg-black/50">
-      <div className="flex items-center p-2">
-        <img src={keplerIcon} alt="Kepler Studio Icon" className="h-10 mr-2" />
+    <header className="absolute w-full left-0 right-0 top-0">
+      <div className="relative w-full bg-blue-400">
+        <HeaderButtons />
+        <DragRegion />
       </div>
-      <HeaderButtons />
-      <DragRegion />
     </header>
   );
 }
