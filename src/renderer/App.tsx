@@ -7,8 +7,8 @@ import './App.css';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-app h-full w-full -z-20">
-      <div className="bg-black/80 backdrop-blur-md h-full w-full -z-10">
+    <div className="bg-app bg-cover h-full w-full -z-20">
+      <div className="bg-black/75 backdrop-blur-md h-full w-full -z-10">
         <div className="z-0 text-white h-full w-full flex flex-col">
           {children}
         </div>
