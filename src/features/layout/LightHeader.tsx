@@ -1,9 +1,4 @@
-import {
-  MaximizeIcon,
-  Minus,
-  PictureInPicture2Icon,
-  XIcon,
-} from 'lucide-react';
+import { MaximizeIcon, MinimizeIcon, Minus, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 function DragRegion() {
@@ -46,9 +41,9 @@ function HeaderButtons() {
         onClick={handleToggleWindowMode}
       >
         {isMaximised ? (
-          <PictureInPicture2Icon className="opacity-50 group-hover:opacity-75 transition-all duration-150 h-6" />
+          <MinimizeIcon className="opacity-65 group-hover:opacity-85 transition-all duration-150 h-4" />
         ) : (
-          <MaximizeIcon className="opacity-50 group-hover:opacity-75 transition-all duration-150 h-6" />
+          <MaximizeIcon className="opacity-65 group-hover:opacity-85 transition-all duration-150 h-4" />
         )}
       </button>
       <button
