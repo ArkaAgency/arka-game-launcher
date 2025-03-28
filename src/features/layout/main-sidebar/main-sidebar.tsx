@@ -98,8 +98,8 @@ export default function MainSidebar({
       <button
         type="button"
         className={clsx(
-          'w-16 h-16 bg-neutral-800 border border-neutral-700 rounded-xl flex items-center justify-center p-4',
-          view === 'settings' ? 'bg-white text-black' : 'hover:bg-neutral-700',
+          'w-16 h-16 bg-neutral-800 border border-neutral-700 text-neutral-400 rounded-xl flex items-center justify-center p-4',
+          view === 'settings' ? 'bg-white !text-black' : 'hover:bg-neutral-700',
         )}
         onClick={() => onViewChange('settings')}
       >
